@@ -15,3 +15,7 @@
 
 # PHP Composer dependencies:
 /vendor/
+
+# virtual environment files
+Pipfile
+Pipfile.lock

@@ -1,0 +1,4 @@
+super user login:
+    username: superuser
+    password: password
+    email: email@email.com

@@ -11,6 +11,12 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
+# import io
+# from urllib.parse import urlparse
+
+# import environ
+# from google.cloud import secretmanager
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +31,9 @@ SECRET_KEY = "django-insecure-$2=p%@q@+s5m!82&%h2%wo-v=wp%zv4457e-3628e%eztof&va
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'spotify-social-media.uk.r.appspot.com',
+    ]
 
 
 # Application definition
@@ -74,12 +82,49 @@ WSGI_APPLICATION = "base.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+import pymysql
+pymysql.version_info = (1, 4, 6, 'final', 0)
+pymysql.install_as_MySQLdb()
+
+if os.getenv('GAE_APPLICATIONS', None):
+    # Running on production App Engine, so connect to Google cloud sql using
+    # the unix socket at /cloudsql/<your-cloudsql-connection string>
+    DATABASE = {
+        "default": {
+            'ENGINE': 'django.db.backends.mysql',
+            "HOST": '/cloudsql/spotify-social-media:us-east4:spotify-social-media',
+            "USER": "david",
+            "PASSWORD": "r00tp@ssword",
+            "NAME": "spotifySocial",
+        }
     }
-}
+else:
+    # running locally so conenc to either a local MySQL instance or connect to 
+    # Cloud SQL via the prox. To start the proxy via command line:
+    #
+    #       $ ./cloud-sql-proxy [INSTANCE_CONNECTION_NAME]
+    #       
+    # For this project specifically, run
+    #       
+    #       $ ./cloud-sql-proxy spotify-social-media:us-east4:spotify-social-media
+    #
+    # See https://cloud.google.com/sql/docs/mysql-connect-proxy
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "HOST": "127.0.0.1",
+            "PORT": "3306",
+            "USER": "david",
+            "PASSWORD": "r00tp@ssword",
+            "NAME": "spotifySocial",
+        }
+    }
 
 
 # Password validation
@@ -116,7 +161,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_ROOT = "static"
+STATIC_URL = "/static/"
+STATICFILES_DIRS = []
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
