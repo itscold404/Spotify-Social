@@ -22,26 +22,26 @@ USE spotifySocial;
 
 INSERT INTO album (album_id, title, popularity, album_type, total_tracks, release_date)
 VALUES
-	('TS123456789ABCDEFGHIJ', 'reputation', 8000, 'Studio', 12, '2017-11-10 00:00:00'), 
-	('BTSALBUM45678912345', 'Renaissance', 7500, 'Studio', 10, '2022-07-29 18:06:20'), 
-	('NEWJEANS567891234567', 'Map of the Soul: 7', 9000, 'Studio', 15, '2020-02-21 01:03:50'), 
-	('KENSHI1234567890ALBM', '21', 7200, 'Studio', 14, '2011-01-24 09:00:00'), 
-	('TAYLORSWIFTALBUM5678', '÷ (Deluxe)', 8500, 'Studio', 9, '2017-03-03 10:20:30'), 
-	('BTS45678912345ALBUM', 'thank u, next', 7600, 'Studio', 11, '2019-02-08 06:44:55'), 
-	('JEANSNEWALBUM567891', 'Illuminate (Deluxe)', 9400, 'Studio', 8, '2016-09-23 00:08:10'), 
-	('KENSHI567890ALBUM123', 'When We All Fall Asleep, Where Do We Go?', 9200, 'Studio', 13, '2019-03-29 08:07:09'), 
-	('SWIFTTAYLORALBUM123', 'Next Episode', 7800, 'Studio', 10, '2020-11-16 00:00:00'), 
-	('BTSALBUM1234567890', 'Kid Krow', 8700, 'Studio', 15, '2020-03-20 16:26:00'), 
-	('NEWALBUM4567890JEANS', 'beerbongs & bentleys', 8200, 'Studio', 12, '2018-04-27 12:11:05'), 
-	('KENSHIALBUM5678901', 'k bye for now (swt live)', 6800, 'Live', 10, '2019-12-23 00:00:00'), 
-	('TAYLORALBUM12345678', 'Speak Now World Tour Live', 9500, 'Live', 14, '2011-11-21 00:00:00'), 
-	('BTSALBUM45678901', 'Teenage Dream', 8900, 'Studio', 9, '2010-08-24 10:03:02'),
-	('JEANSNEW45678ALBUM', 'Purpose (Deluxe)', 8600, 'Studio', 11, '2015-11-13 03:19:56'), 
-	('KENSHI12345ALBUM67', 'Endless Summer Vacation', 7200, 'Studio', 8, '2023-03-10 17:28:08'), 
-	('SWIFTALBUM56789012', 'Recovery (Deluxe Edition)', 9000, 'Studio', 13, '2010-06-18 23:34:10'), 
-	('BTSALBUM56789123', 'Good Girl Gone Bad: Reloaded', 7800, 'Studio', 12, '2007-05-31 00:00:00'),
-	('JEANSNEW40121ALBUM', 'The Joshua Tree (Super Deluxe)', 8500, 'Studio', 14, '1987-03-09 09:18:45'), 
-	('KENSHI567890ALBUM', 'After Hours (Deluxe)', 7600, 'Studio', 11, '2020-03-20 14:20:13');
+	('TS123456789ABCDEFGHIJ', 'reputation', 98, 'Studio', 12, '2017-11-10 00:00:00'), 
+	('BTSALBUM45678912345', 'Renaissance', 95, 'Studio', 10, '2022-07-29 18:06:20'), 
+	('NEWJEANS567891234567', 'Map of the Soul: 7', 87, 'Studio', 15, '2020-02-21 01:03:50'), 
+	('KENSHI1234567890ALBM', '21', 7200, 'Studio', 97, '2011-01-24 09:00:00'), 
+	('TAYLORSWIFTALBUM5678', '÷ (Deluxe)', 65, 'Studio', 9, '2017-03-03 10:20:30'), 
+	('BTS45678912345ALBUM', 'thank u, next', 76, 'Studio', 11, '2019-02-08 06:44:55'), 
+	('JEANSNEWALBUM567891', 'Illuminate (Deluxe)', 94, 'Studio', 8, '2016-09-23 00:08:10'), 
+	('KENSHI567890ALBUM123', 'When We All Fall Asleep, Where Do We Go?', 92, 'Studio', 13, '2019-03-29 08:07:09'), 
+	('SWIFTTAYLORALBUM123', 'Next Episode', 78, 'Studio', 10, '2020-11-16 00:00:00'), 
+	('BTSALBUM1234567890', 'Kid Krow', 87, 'Studio', 15, '2020-03-20 16:26:00'), 
+	('NEWALBUM4567890JEANS', 'beerbongs & bentleys', 82, 'Studio', 12, '2018-04-27 12:11:05'), 
+	('KENSHIALBUM5678901', 'k bye for now (swt live)', 68, 'Live', 10, '2019-12-23 00:00:00'), 
+	('TAYLORALBUM12345678', 'Speak Now World Tour Live', 95, 'Live', 14, '2011-11-21 00:00:00'), 
+	('BTSALBUM45678901', 'Teenage Dream', 89, 'Studio', 9, '2010-08-24 10:03:02'),
+	('JEANSNEW45678ALBUM', 'Purpose (Deluxe)', 86, 'Studio', 11, '2015-11-13 03:19:56'), 
+	('KENSHI12345ALBUM67', 'Endless Summer Vacation', 72, 'Studio', 8, '2023-03-10 17:28:08'), 
+	('SWIFTALBUM56789012', 'Recovery (Deluxe Edition)', 90, 'Studio', 13, '2010-06-18 23:34:10'), 
+	('BTSALBUM56789123', 'Good Girl Gone Bad: Reloaded', 78, 'Studio', 12, '2007-05-31 00:00:00'),
+	('JEANSNEW40121ALBUM', 'The Joshua Tree (Super Deluxe)', 85, 'Studio', 14, '1987-03-09 09:18:45'), 
+	('KENSHI567890ALBUM', 'After Hours (Deluxe)', 76, 'Studio', 11, '2020-03-20 14:20:13');
 
 INSERT INTO album_by (album_id, artist_id)
 VALUES
