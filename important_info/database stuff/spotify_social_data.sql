@@ -1,13 +1,29 @@
 -- spotifySocial is the name of the database on google cloud
 USE spotifySocial;
 
-INSERT INTO user_profile (user_name, number_of_posts, school, area_of_study, computing_id, bio)
+DROP TABLE school_song_chart;
+
+CREATE TABLE `school_song_chart` (
+  `school_name` varchar(255) NOT NULL,
+  `ranking` int(11) NOT NULL,
+  `song_id` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+ALTER TABLE `school_song_chart`
+  ADD PRIMARY KEY (`school_name`, `ranking`),
+  ADD KEY `ranking_key` (`ranking`);
+
+ALTER TABLE `school_song_chart`
+  ADD CONSTRAINT `school_song_chart_ibfk_1` FOREIGN KEY (`song_id`) REFERENCES `song` (`song_id`);
+
+-- NOTE: USER_PROFILE IS MISSING NAME. INSERT NAME COLUMN INTO DATABASE
+INSERT INTO user_profile (user_name, number_of_posts, school, area_of_study, computing_id, bio, full_name)
 VALUES
-	('12345', 5, 'UVA', 'Computer Science', 'jd12345', NULL),
-	('67890', 12, 'UVA', 'Mechanical Engineering', 'js67890', NULL),
-	('11121', 7, 'UVA', 'Biology', 'aw11121', NULL),
-	('13141', 10, 'UVA', 'Mathematics', 'bb13141', NULL),
-	('15161', 3, 'UVA', 'Chemical Engineering', 'cc15161', NULL);
+	('12345', 5, 'UVA', 'Computer Science', 'jd12345', NULL, 'bob'),
+	('67890', 12, 'UVA', 'Mechanical Engineering', 'js67890', NULL, 'billy'),
+	('11121', 7, 'UVA', 'Biology', 'aw11121', NULL, 'kelly'),
+	('13141', 10, 'UVA', 'Mathematics', 'bb13141', NULL, 'sam'),
+	('15161', 3, 'UVA', 'Chemical Engineering', 'cc15161', NULL, 'sally');
 
 INSERT INTO user_login (user_name, password)
 VALUES
@@ -221,7 +237,7 @@ VALUES
 	('11121', '12345', '2023-10-26 13:00:00'),
 	('15161', '12345', '2023-10-26 13:00:00');
 
-INSERT INTO school_song_chart (school_name, rank, song_id)
+INSERT INTO school_song_chart (school_name, ranking, song_id)
 VALUES 
 	('engineering', 1, '11dFghVXANMlKmJXsNCbNl003'),
 	('engineering', 2, '11dFghVXANMlKmJXsNCbNl007'),
