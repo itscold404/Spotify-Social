@@ -188,7 +188,7 @@ CREATE TABLE `artist` (
 
 LOCK TABLES `artist` WRITE;
 /*!40000 ALTER TABLE `artist` DISABLE KEYS */;
-INSERT INTO artist (artist_id, name, popularity, follower_count)
+INSERT INTO artist (artist_id, artist_name, popularity, follower_count)
 VALUES
 	('A1b2C3d4E5f6G7h8I9j0', 'Taylor Swift', 10, 90026456),
 	('K1L2M3N4O5P6Q7R8S9T0', 'Beyoncé', 20, 36075322),
@@ -703,7 +703,7 @@ CREATE TABLE `song` (
 
 LOCK TABLES `song` WRITE;
 /*!40000 ALTER TABLE `song` DISABLE KEYS */;
-INSERT INTO song (song_id, duration_ms, name, popularity)
+INSERT INTO song (song_id, duration_ms, song_name, popularity)
 VALUES
     ('11dFghVXANMlKmJXsNCbNl001', 228500, 'I Did Something Bad', 100),
     ('11dFghVXANMlKmJXsNCbNl002', 205800, 'Single Ladies (Put a Ring on It)', 90),
