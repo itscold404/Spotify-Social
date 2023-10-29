@@ -19,9 +19,9 @@
 -- Current Database: `spotifySocial`
 --
 
-CREATE DATABASE /*!32312 IF NOT EXISTS*/ `spotifySocial` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `spotifySocial_dummy` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 
-USE `spotifySocial`;
+USE `spotifySocial_dummy`;
 
 --
 -- Table structure for table `album`
