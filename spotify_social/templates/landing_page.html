@@ -1,0 +1,37 @@
+<!--static files include css, fonts, images, javascript code-->
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Spotify Social</title>
+
+    <!--"import" BootStrap-->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css" rel="stylesheet" 
+    integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <!-- enable Bootstrap's JavaScript features-->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js" 
+    integrity="sha384-jp5Nik8pfsL82ayceP1+o8U1yj4M0j7Xp+IlF6ZB3/2Y5vMFLFb4L5Q2rfB65j0S" crossorigin="anonymous"></script>
+
+    <!--Setting the base url. other urls such as login and user profile will use this as the beginning of url-->
+    <base href="https://spotify-social-media.uk.r.appspot.com/">
+</head>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>stuff</th>
+            <th>stuff</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in results %}
+            <tr>
+                <td>{{ row.0 }}</td>
+                <td>{{ row.1 }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
