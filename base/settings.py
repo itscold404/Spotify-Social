@@ -33,6 +33,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'spotify-social-media.uk.r.appspot.com',
+    '127.0.0.1'
     ]
 
 
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "bootstrap5",
     "spotify_social"
 ]
 
@@ -82,12 +84,6 @@ WSGI_APPLICATION = "base.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 import pymysql
 pymysql.version_info = (1, 4, 6, 'final', 0)
 pymysql.install_as_MySQLdb()
@@ -101,7 +97,7 @@ if os.getenv('GAE_APPLICATIONS', None):
             "HOST": '/cloudsql/spotify-social-media:us-east4:spotify-social-media',
             "USER": "david",
             "PASSWORD": "r00tp@ssword",
-            "NAME": "spotifySocial",
+            "NAME": "spotifySocial_dummy",
         }
     }
 else:
@@ -122,7 +118,7 @@ else:
             "PORT": "3306",
             "USER": "david",
             "PASSWORD": "r00tp@ssword",
-            "NAME": "spotifySocial",
+            "NAME": "spotifySocial_dummy",
         }
     }
 
