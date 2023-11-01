@@ -1,0 +1,67 @@
+{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+
+    <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #525E9B;">
+    <a class="navbar-brand">Spotify Social</a>
+    </nav>
+  </head>
+  <br />
+  <br />
+  <body>
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <form class="form-container" action="{%url 'check_credentials'%}" method="POST">
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert">
+                          ×
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% csrf_token %}
+            <h3 class="text-center mb-3">Login</h3>
+            <br />
+
+            <div class="form-group">
+              <input type="text" class="form-control" placeholder="Username" name="user_name" />
+            </div>
+
+            <div class="form-group">
+              <input type="password" class="form-control" placeholder="Password" name="password" />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block" style="background-color:#525E9B; border:none">Sign In</button><br>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="form-group text-center mt-3">
+        <a href="{% url 'signup_page' %}">Sign Up Here!</a>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/esm/popper"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

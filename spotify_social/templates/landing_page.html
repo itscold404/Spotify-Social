@@ -1,39 +1,61 @@
 <!--static files include css, fonts, images, javascript code-->
-{% load static %}
+{% load static %}{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Spotify Social</title>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Spotify Social</title>
 
-    <!--"import" BootStrap-->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/css/bootstrap.min.css" rel="stylesheet" 
-    integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
-    <!-- enable Bootstrap's JavaScript features-->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.0.0-beta3/js/bootstrap.min.js" 
-    integrity="sha384-jp5Nik8pfsL82ayceP1+o8U1yj4M0j7Xp+IlF6ZB3/2Y5vMFLFb4L5Q2rfB65j0S" crossorigin="anonymous"></script>
+        <link
+            rel="stylesheet"
+            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        />
 
-    <!--Setting the base url. other urls such as login and user profile will use this as the beginning of url-->
-    <base href="https://spotify-social-media.uk.r.appspot.com/">
-</head>
+        <link rel="stylesheet" href="style.css" />
 
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>stuff</th>
-            <th>stuff</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in results %}
-            <tr>
-                <td>{{ row.0 }}</td>
-                <td>{{ row.1 }}</td>
-                <td>{{ row.3 }}</td>
-                <td>{{ row.4 }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        <!--Setting the base url. other urls such as login and user profile will use this as the beginning of url-->
+        {% comment %} <base href="https://spotify-social-media.uk.r.appspot.com/"> {% endcomment %}
+        {% comment %} <base href="http://127.0.0.1:8000/"> {% endcomment %}
+
+
+    </head>
+
+    <!--style="background-image: url('https://www.haverford.edu/sites/default/files/Office/OAR/OAR-peer-tutoring-in-action.jpg');
+    background-size : cover; overflow:hidden"-->
+    
+    <!-- use this for background image?-->
+    <body>
+        <div class="d-flex flex-column justify-content-center align-items-center" style="height: 100vh">
+            <h1 style="color:white; text-shadow: -1px 1px 2px #000,
+                        1px 2px 6px #000,
+                        1px -1px 0 #000,
+                        -1px -1px 0 #000;">Spotify Social</h1>
+            <a href="{%url 'login_page'%}" class="button btn btn-primary btn-lg mt-3"
+                style="background-color:#525E9B; border:none">
+                Log In!
+            </a>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>stuff</th>
+                    <th>stuff</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                    <tr>
+                        <td>{{ row.0 }}</td>
+                        <td>{{ row.1 }}</td>
+                        <td>{{ row.3 }}</td>
+                        <td>{{ row.4 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>
