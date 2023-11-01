@@ -33,6 +33,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'spotify-social-media.uk.r.appspot.com',
+    '127.0.0.1'
     ]
 
 
