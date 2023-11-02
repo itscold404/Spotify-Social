@@ -84,17 +84,24 @@ WSGI_APPLICATION = "base.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
 import pymysql
 pymysql.version_info = (1, 4, 6, 'final', 0)
 pymysql.install_as_MySQLdb()
 
-if os.getenv('GAE_APPLICATIONS', None):
+if os.getenv('GAE_APPLICATION', None):
     # Running on production App Engine, so connect to Google cloud sql using
     # the unix socket at /cloudsql/<your-cloudsql-connection string>
-    DATABASE = {
+    DATABASES = {
         "default": {
-            'ENGINE': 'django.db.backends.mysql',
-            "HOST": '/cloudsql/spotify-social-media:us-east4:spotify-social-media',
+            "ENGINE": "django.db.backends.mysql",
+            "HOST": "/cloudsql/spotify-social-media:us-east4:spotify-social-media",
             "USER": "david",
             "PASSWORD": "r00tp@ssword",
             "NAME": "spotifySocial_dummy",

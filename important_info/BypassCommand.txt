@@ -1,7 +1,0 @@
-If there is security error after deploying:
-
-    gcloud app deploy
-
-run command below to bypass execution policy for one-time session:
-
-    PowerShell -ExecutionPolicy Bypass
