@@ -4,13 +4,13 @@ from django.urls import reverse
 from spotify_social.utils import *
 import bcrypt
 
+#----------------------------------------------------------------------------
+# Check whether the username and password matches with a user to sign then in
+#----------------------------------------------------------------------------
 def check_credentials(request):
     if request.method == "POST":
         inputted_user_name = request.POST.get('user_name')
         inputted_password = request.POST.get('password')
-        
-        print("username and password----", inputted_user_name, inputted_password)
-        print(request.POST)
         
         db = Database()
         result = db.execute('''
@@ -31,21 +31,21 @@ def check_credentials(request):
         # Close connections to the database to save resources
         db.close()
         
-        print(hashed_password, inputted_password)
         # A matching username found, now check if password matches
-        # TODO: CREATE HASHING
-        # if (matches == 1) and (bcrypt.checkpw(hashed_password, inputted_password)):
-        if (num_matches == 1) and (hashed_password == inputted_password):
+        if (num_matches == 1) and bcrypt.checkpw(inputted_password.encode('utf-8'), hashed_password.encode('utf-8')):
                 request.session['user_id'] = inputted_user_name
                 
                 # TODO: create/populate user home page
                 # redirect used to ensure user is using a proper url to avoid errors
+                request.session['user_id'] = inputted_user_name
                 return redirect(reverse('user_home_page'))
         else:
             messages.error(request, "Invalid Username Password Combination")
             return redirect(reverse('login_page'))
 
-
+#----------------------------------------------------------------------------
+# Create a new account for the user
+#----------------------------------------------------------------------------
 def create_account(request):
     if request.method == "POST":        
         inputted_user_name = request.POST.get('user_name')
@@ -66,10 +66,12 @@ def create_account(request):
         # The username is unique and password matches, create account
         if num_same_username == 0:
             if inputted_password == inputted_re_password:
+                hashed_password = bcrypt.hashpw(inputted_password.encode('utf-8'), bcrypt.gensalt())
+                
                 db.execute('''
                             INSERT INTO user_login (user_name, password) 
                             VALUES (%s,%s);
-                            ''', (inputted_user_name, inputted_password), False) 
+                            ''', (inputted_user_name, hashed_password), False) 
                 
                 db.execute('''
                             INSERT INTO user_profile (user_name, full_name)
@@ -100,6 +102,9 @@ def create_account(request):
             return redirect(reverse('signup_page'))
 
 
+#----------------------------------------------------------------------------
+# Logs the user out if they are signed in
+#----------------------------------------------------------------------------
 def logout(request):
     if 'user_id' in request.session:
         del request.session['user_id']

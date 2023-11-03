@@ -80,13 +80,6 @@ WSGI_APPLICATION = "base.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 import pymysql
 pymysql.version_info = (1, 4, 6, 'final', 0)
 pymysql.install_as_MySQLdb()
@@ -95,11 +88,6 @@ db_user = config('CLOUD_SQL_USERNAME')
 db_pass = config('CLOUD_SQL_PASSWORD')
 db_name = config('CLOUD_SQL_DATABASE_NAME')
 host = config('HOST')
-
-# print("db_user", db_user)
-# print("db_pass", db_pass)
-# print("db_name", db_name)
-# print("instance_connection_name", host)
 
 if os.getenv('GAE_APPLICATION', None):
     # Running on production App Engine, so connect to Google cloud sql using
