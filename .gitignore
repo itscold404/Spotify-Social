@@ -1,4 +1,8 @@
+# virtual environment files
 Pipfile
 Pipfile.lock
+
+# python cache
 .pyc
-.env
+
+# env
