@@ -12,11 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
-# import io
-# from urllib.parse import urlparse
-
-# import environ
-# from google.cloud import secretmanager
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -84,16 +80,14 @@ WSGI_APPLICATION = "base.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
 import pymysql
 pymysql.version_info = (1, 4, 6, 'final', 0)
 pymysql.install_as_MySQLdb()
+
+db_user = config('CLOUD_SQL_USERNAME')  
+db_pass = config('CLOUD_SQL_PASSWORD')
+db_name = config('CLOUD_SQL_DATABASE_NAME')
+host = config('HOST')
 
 if os.getenv('GAE_APPLICATION', None):
     # Running on production App Engine, so connect to Google cloud sql using
@@ -101,10 +95,10 @@ if os.getenv('GAE_APPLICATION', None):
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
-            "HOST": "/cloudsql/spotify-social-media:us-east4:spotify-social-media",
-            "USER": "david",
-            "PASSWORD": "r00tp@ssword",
-            "NAME": "spotifySocial_dummy",
+            "HOST": host,
+            "USER": db_user,
+            "PASSWORD": db_pass,
+            "NAME": db_name,
         }
     }
 else:
@@ -123,9 +117,9 @@ else:
             "ENGINE": "django.db.backends.mysql",
             "HOST": "127.0.0.1",
             "PORT": "3306",
-            "USER": "david",
-            "PASSWORD": "r00tp@ssword",
-            "NAME": "spotifySocial_dummy",
+            "USER": db_user,
+            "PASSWORD": db_pass,
+            "NAME": db_name,
         }
     }
 
