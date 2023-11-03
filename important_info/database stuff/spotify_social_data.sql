@@ -16,9 +16,8 @@ ALTER TABLE `school_song_chart`
 ALTER TABLE `school_song_chart`
   ADD CONSTRAINT `school_song_chart_ibfk_1` FOREIGN KEY (`song_id`) REFERENCES `song` (`song_id`);
 
--- NOTE: USER_PROFILE IS MISSING NAME. INSERT NAME COLUMN INTO DATABASE
--- spotifySocial is the name of the database on google cloud
-USE spotifySocial;
+NOTE: USER_PROFILE IS MISSING NAME. INSERT NAME COLUMN INTO DATABASE
+spotifySocial is the name of the database on google cloud
 
 INSERT INTO album (album_id, title, popularity, album_type, total_tracks, release_date)
 VALUES
@@ -42,6 +41,58 @@ VALUES
 	('BTSALBUM56789123', 'Good Girl Gone Bad: Reloaded', 78, 'Studio', 15, '2007-05-31 00:00:00'),
 	('JEANSNEW40121ALBUM', 'The Joshua Tree (Super Deluxe)', 85, 'Studio', 49, '1987-03-09 09:18:45'), 
 	('KENSHI567890ALBUM', 'After Hours (Deluxe)', 76, 'Studio', 18, '2020-03-20 14:20:13');
+
+INSERT INTO artist (artist_id, artist_name, popularity, follower_count)
+VALUES
+	('A1b2C3d4E5f6G7h8I9j0', 'Taylor Swift', 10, 90026456),
+	('K1L2M3N4O5P6Q7R8S9T0', 'Beyoncé', 20, 36075322),
+	('U1V2W3X4Y5Z6a7b8c9d0', 'BTS', 50, 70356205),
+	('D1E2F3G4H5I6J7K8L9M0', 'Adele', 12, 52004063),
+	('N1O2P3Q4R5S6T7U8V9W0', 'Ed Sheeran', 86, 114875034),
+	('X1Y2Z3A4B5C6D7E8F9G0', 'Ariana Grande', 92, 94233961),
+	('H1I2J3K4L5M6N7O8P9Q0', 'Shawn Mendes', 72, 42521163),
+	('R1S2T3U4V5W6X7Y8Z9A0', 'Billie Eilish', 54, 87878184),
+	('B1C2D3E4F5G6H7I8J9K0', 'AKMU', 88, 1457519),
+	('E1F2G3H4I5J6K7L8M9N0', 'Conan Gray', 96, 8518108),
+	('L1M2N3O4P5Q6R7S8T9U0', 'Post Malone', 93, 42396464),
+	('G1H2I3J4K5L6M7N8O9P0', 'Penomeco', 68, 356958),
+	('P1Q2R3S4T5U6V7W8X9Y0', 'Coldplay', 77, 47637325),
+	('Q1W2E3R4T5Y6U7I8O9', 'Katy Perry', 78, 29903757),
+	('Z1X2C3V4B5N6M7A8S9', 'Justin Bieber', 100, 74256151),
+	('F1D2S3A4J5K6L7F8J9', 'Miley Cyrus', 76, 22394226),
+	('B1E2T3S4Y5E6J7S8D9', 'Eminem', 94, 77596640),
+	('R1O2N3E4D5I6R7N8K9', 'Rihanna', 83, 58044161),
+	('A1R2T3I4S5T6G7A8R9', 'U2', 33, 11614096),
+	('L1O2V3E4S5H6A7C8M9', 'The Weeknd', 89, 73418832),
+	('S1T2I3N4G5K6U7I8L9', 'Alicia Keys', 82, 11110247),
+	('N1O2L3T4O5Y6I7T8S9', 'Norah Jones', 69, 3026525),
+	('C1H2R3I4S5B6R7O8W9', 'New Jeans', 85, 5811406);
+
+INSERT INTO user_profile (user_name, number_of_posts, school, area_of_study, computing_id, bio, full_name)
+VALUES
+	('11121', 7, 'UVA', 'Biology', 'aw11121', NULL, 'arnold'),
+	('12345', 5, 'UVA', 'Computer Science', 'jd12345', NULL, 'bob'),
+	('13141', 10, 'UVA', 'Mathematics', 'bb13141', NULL, 'sally'),
+	('15161', 3, 'UVA', 'Chemical Engineering', 'cc15161', NULL, 'kelly'),
+	('67890', 12, 'UVA', 'Mechanical Engineering', 'js67890', NULL, 'billy');
+
+INSERT INTO song (song_id, duration_ms, song_name, popularity)
+VALUES
+    ('11dFghVXANMlKmJXsNCbNl001', 228500, 'I Did Something Bad', 100),
+    ('11dFghVXANMlKmJXsNCbNl002', 205800, 'Single Ladies (Put a Ring on It)', 90),
+    ('11dFghVXANMlKmJXsNCbNl003', 219700, 'Dynamite', 85),
+    ('11dFghVXANMlKmJXsNCbNl004', 212400, 'Someone Like You', 80),
+    ('11dFghVXANMlKmJXsNCbNl005', 198200, 'Shape of You', 95),
+    ('11dFghVXANMlKmJXsNCbNl006', 226100, '7rings', 88),
+    ('11dFghVXANMlKmJXsNCbNl007', 207500, 'Stitches', 75),
+    ('11dFghVXANMlKmJXsNCbNl008', 214800, 'bad guy', 78),
+    ('11dFghVXANMlKmJXsNCbNl009', 197600, 'Nakka (feat. IU)', 92),
+    ('11dFghVXANMlKmJXsNCbNl010', 222300, 'Heather', 89),
+    ('11dFghVXANMlKmJXsNCbNl011', 218700, 'rockstar (feat. 21 Savage)', 82),
+    ('11dFghVXANMlKmJXsNCbNl012', 211900, 'Bolo (feat. YDG)', 79),
+    ('11dFghVXANMlKmJXsNCbNl013', 206500, 'My Universe', 97),
+    ('11dFghVXANMlKmJXsNCbNl014', 199300, 'Dark Horse', 91),
+    ('11dFghVXANMlKmJXsNCbNl015', 223400, 'Sorry', 84);
 
 INSERT INTO album_by (album_id, artist_id)
 VALUES
@@ -88,32 +139,6 @@ VALUES
 	('BTSALBUM56789123', 'Dance Pop'), 
 	('JEANSNEW40121ALBUM', 'Rock'),
 	('KENSHI567890ALBUM', 'R&B');
-
-INSERT INTO artist (artist_id, artist_name, popularity, follower_count)
-VALUES
-	('A1b2C3d4E5f6G7h8I9j0', 'Taylor Swift', 10, 90026456),
-	('K1L2M3N4O5P6Q7R8S9T0', 'Beyoncé', 20, 36075322),
-	('U1V2W3X4Y5Z6a7b8c9d0', 'BTS', 50, 70356205),
-	('D1E2F3G4H5I6J7K8L9M0', 'Adele', 12, 52004063),
-	('N1O2P3Q4R5S6T7U8V9W0', 'Ed Sheeran', 86, 114875034),
-	('X1Y2Z3A4B5C6D7E8F9G0', 'Ariana Grande', 92, 94233961),
-	('H1I2J3K4L5M6N7O8P9Q0', 'Shawn Mendes', 72, 42521163),
-	('R1S2T3U4V5W6X7Y8Z9A0', 'Billie Eilish', 54, 87878184),
-	('B1C2D3E4F5G6H7I8J9K0', 'AKMU', 88, 1457519),
-	('E1F2G3H4I5J6K7L8M9N0', 'Conan Gray', 96, 8518108),
-	('L1M2N3O4P5Q6R7S8T9U0', 'Post Malone', 93, 42396464),
-	('G1H2I3J4K5L6M7N8O9P0', 'Penomeco', 68, 356958),
-	('P1Q2R3S4T5U6V7W8X9Y0', 'Coldplay', 77, 47637325),
-	('Q1W2E3R4T5Y6U7I8O9', 'Katy Perry', 78, 29903757),
-	('Z1X2C3V4B5N6M7A8S9', 'Justin Bieber', 100, 74256151),
-	('F1D2S3A4J5K6L7F8J9', 'Miley Cyrus', 76, 22394226),
-	('B1E2T3S4Y5E6J7S8D9', 'Eminem', 94, 77596640),
-	('R1O2N3E4D5I6R7N8K9', 'Rihanna', 83, 58044161),
-	('A1R2T3I4S5T6G7A8R9', 'U2', 33, 11614096),
-	('L1O2V3E4S5H6A7C8M9', 'The Weeknd', 89, 73418832),
-	('S1T2I3N4G5K6U7I8L9', 'Alicia Keys', 82, 11110247),
-	('N1O2L3T4O5Y6I7T8S9', 'Norah Jones', 69, 3026525),
-	('C1H2R3I4S5B6R7O8W9', 'New Jeans', 85, 5811406);
 
 INSERT INTO artist_genre (artist_id, genre)
 VALUES
@@ -175,24 +200,6 @@ VALUES
 	('engineering', 3, '11dFghVXANMlKmJXsNCbNl015'), 
 	('engineering', 4, '11dFghVXANMlKmJXsNCbNl013'), 
 	('engineering', 5, '11dFghVXANMlKmJXsNCbNl005');
-
-INSERT INTO song (song_id, duration_ms, song_name, popularity)
-VALUES
-    ('11dFghVXANMlKmJXsNCbNl001', 228500, 'I Did Something Bad', 100),
-    ('11dFghVXANMlKmJXsNCbNl002', 205800, 'Single Ladies (Put a Ring on It)', 90),
-    ('11dFghVXANMlKmJXsNCbNl003', 219700, 'Dynamite', 85),
-    ('11dFghVXANMlKmJXsNCbNl004', 212400, 'Someone Like You', 80),
-    ('11dFghVXANMlKmJXsNCbNl005', 198200, 'Shape of You', 95),
-    ('11dFghVXANMlKmJXsNCbNl006', 226100, '7rings', 88),
-    ('11dFghVXANMlKmJXsNCbNl007', 207500, 'Stitches', 75),
-    ('11dFghVXANMlKmJXsNCbNl008', 214800, 'bad guy', 78),
-    ('11dFghVXANMlKmJXsNCbNl009', 197600, 'Nakka (feat. IU)', 92),
-    ('11dFghVXANMlKmJXsNCbNl010', 222300, 'Heather', 89),
-    ('11dFghVXANMlKmJXsNCbNl011', 218700, 'rockstar (feat. 21 Savage)', 82),
-    ('11dFghVXANMlKmJXsNCbNl012', 211900, 'Bolo (feat. YDG)', 79),
-    ('11dFghVXANMlKmJXsNCbNl013', 206500, 'My Universe', 97),
-    ('11dFghVXANMlKmJXsNCbNl014', 199300, 'Dark Horse', 91),
-    ('11dFghVXANMlKmJXsNCbNl015', 223400, 'Sorry', 84);
 
 INSERT INTO song_by (song_id, artist_id)
 VALUES
@@ -260,10 +267,3 @@ VALUES
 	('13141', 'anothergoodpasswrd'),
 	('15161', '123');
 
-INSERT INTO user_profile (user_name, number_of_posts, school, area_of_study, computing_id, bio, full_name)
-VALUES
-	('11121', 7, 'UVA', 'Biology', 'aw11121', NULL, 'arnold'),
-	('12345', 5, 'UVA', 'Computer Science', 'jd12345', NULL, 'bob'),
-	('13141', 10, 'UVA', 'Mathematics', 'bb13141', NULL, 'sally'),
-	('15161', 3, 'UVA', 'Chemical Engineering', 'cc15161', NULL, 'kelly'),
-	('67890', 12, 'UVA', 'Mechanical Engineering', 'js67890', NULL, 'billy');
