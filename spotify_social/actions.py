@@ -84,14 +84,14 @@ def create_account(request):
                 hashed_password = bcrypt.hashpw(inputted_password.encode('utf-8'), bcrypt.gensalt())
                 
                 db.execute('''
-                            INSERT INTO user_login (user_name, password) 
-                            VALUES (%s,%s);
-                            ''', (inputted_user_name, hashed_password), False) 
-                
-                db.execute('''
                             INSERT INTO user_profile (user_name, full_name)
                             VALUES (%s, %s);
                             ''', (inputted_user_name, inputted_name), False) 
+                                
+                db.execute('''
+                            INSERT INTO user_login (user_name, password) 
+                            VALUES (%s,%s);
+                            ''', (inputted_user_name, hashed_password), False) 
                 
                 db.update_db_and_close()
                 
