@@ -18,10 +18,6 @@ runtime: python39
 env_variables:
   # This setting is used in settings.py to configure your ALLOWED_HOSTS
     APPENGINE_URL: https://spotify-social-media.uc.r.appspot.com
-    CLOUD_SQL_USERNAME: "david"
-    CLOUD_SQL_PASSWORD: "r00tp@ssword"
-    CLOUD_SQL_DATABASE_NAME: "spotifySocial_dummy"
-    INSTANCE_CONNECTION_NAME: "spotify-social-media:us-east4:spotify-social-media"
 
 entrypoint: gunicorn base.wsgi:application
 
