@@ -13,8 +13,9 @@
         <link rel="stylesheet" href="style.css" />
 
         <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #525E9B;">
-        <a class="navbar-brand">Spotify Social</a>
+        <a class="navbar-brand" href="{% url 'user_home_page' %}">Spotify Social</a>
         <a class="navbar-brand" href="{% url 'logout' %}">Log Out</a>
+        <a class="navbar-brand" href="{% url 'user_profile_page' %}">Profile</a>
         </nav>
     </head>
     <br />

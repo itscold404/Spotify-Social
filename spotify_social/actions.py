@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from spotify_social.utils import *
+from django.http import HttpResponse
 import bcrypt
 
 #----------------------------------------------------------------------------
@@ -32,16 +33,30 @@ def check_credentials(request):
         db.close()
         
         # A matching username found, now check if password matches
-        if (num_matches == 1) and bcrypt.checkpw(inputted_password.encode('utf-8'), hashed_password.encode('utf-8')):
-                request.session['user_id'] = inputted_user_name
-                
-                # TODO: create/populate user home page
-                # redirect used to ensure user is using a proper url to avoid errors
-                request.session['user_id'] = inputted_user_name
-                return redirect(reverse('user_home_page'))
-        else:
-            messages.error(request, "Invalid Username Password Combination")
-            return redirect(reverse('login_page'))
+        # TODO: delete except section after database wipe with real data
+        try:
+            if (num_matches == 1) and bcrypt.checkpw(inputted_password.encode('utf-8'), hashed_password.encode('utf-8')):
+                    request.session['user_id'] = inputted_user_name
+                    
+                    # TODO: create/populate user home page
+                    # redirect used to ensure user is using a proper url to avoid errors
+                    request.session['user_id'] = inputted_user_name
+                    return redirect(reverse('user_home_page'))
+            else:
+                messages.error(request, "Invalid Username Password Combination")
+                return redirect(reverse('login_page'))
+            
+        except:
+            if (num_matches == 1) and (inputted_password == hashed_password):
+                    request.session['user_id'] = inputted_user_name
+                    
+                    # TODO: create/populate user home page
+                    # redirect used to ensure user is using a proper url to avoid errors
+                    request.session['user_id'] = inputted_user_name
+                    return redirect(reverse('user_home_page'))
+            else:
+                messages.error(request, "Invalid Username Password Combination")
+                return redirect(reverse('login_page'))
 
 #----------------------------------------------------------------------------
 # Create a new account for the user
@@ -101,7 +116,32 @@ def create_account(request):
             request.session['user_inputs'] = [inputted_user_name, inputted_name]            
             return redirect(reverse('signup_page'))
 
-
+#----------------------------------------------------------------------------
+# Update user profile with the info they input
+#----------------------------------------------------------------------------
+def update_profile(request):
+    if request.method == "POST":
+        user = request.session['user_id']
+        name = request.POST.get('name')
+        bio = request.POST.get('bio')
+        comp_id = request.POST.get('comp_id')
+        school = request.POST.get('school')
+        area_study = request.POST.get('area_study')
+        password = request.POST.get('password')
+        re_password = request.POST.get('re_password')
+        
+        db = Database()
+        db.execute('''
+                   UPDATE user_profile
+                   SET full_name=%s, bio=%s, computing_id=%s, school = %s, area_of_study=%s
+                   WHERE user_name = %s;
+                   ''', (name, bio, comp_id, school, area_study, user), False)
+        
+        db.update_db_and_close()
+        messages.success(request, "Updated Profile!")
+        
+        return redirect(reverse('user_profile_page'))
+    
 #----------------------------------------------------------------------------
 # Logs the user out if they are signed in
 #----------------------------------------------------------------------------
