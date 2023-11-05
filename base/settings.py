@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
-from decouple import config
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -84,11 +84,18 @@ import pymysql
 pymysql.version_info = (1, 4, 6, 'final', 0)
 pymysql.install_as_MySQLdb()
 
-db_user = config('CLOUD_SQL_USERNAME')  
-db_pass = config('CLOUD_SQL_PASSWORD')
-db_name = config('CLOUD_SQL_DATABASE_NAME')
-host = config('HOST')
+load_dotenv()
+db_user = os.getenv('CLOUD_SQL_USERNAME')  
+db_pass = os.getenv('CLOUD_SQL_PASSWORD')
+db_name = os.getenv('CLOUD_SQL_DATABASE_NAME')
+host = os.getenv('HOST')
 
+print("in settings")
+print(db_user)
+print(db_pass)
+print(db_name)
+print(host)
+        
 if os.getenv('GAE_APPLICATION', None):
     # Running on production App Engine, so connect to Google cloud sql using
     # the unix socket at /cloudsql/<your-cloudsql-connection string>

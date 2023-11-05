@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from spotify_social.utils import *
-import bcrypt
+from spotify_social.database import *
     
 
 # Shows the user the landing page. This should be the first page they see

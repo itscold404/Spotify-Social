@@ -1,14 +1,22 @@
 import os
 import MySQLdb
-from decouple import config
+from dotenv import load_dotenv
   
 class Database:
     def __init__(self):
-        db_user = config('CLOUD_SQL_USERNAME')  
-        db_pass = config('CLOUD_SQL_PASSWORD')
-        db_name = config('CLOUD_SQL_DATABASE_NAME', 'spotifySocial_dummy')
-        db_socket_dir = config('DB_SOCKET_DIR', '/cloudsql')
-        instance_connection_name = config('INSTANCE_CONNECTION_NAME')
+        load_dotenv()
+        db_user = os.getenv('CLOUD_SQL_USERNAME')  
+        db_pass = os.getenv('CLOUD_SQL_PASSWORD')
+        db_name = os.getenv('CLOUD_SQL_DATABASE_NAME')
+        db_socket_dir = os.getenv('DB_SOCKET_DIR')
+        instance_connection_name = os.getenv('INSTANCE_CONNECTION_NAME')
+        
+        print("in databases------------------")
+        print(db_user)
+        print(db_pass)
+        print(db_name)
+        print(db_socket_dir)
+        print(instance_connection_name)
 
         # Check if running on GAE
         if os.environ.get('GAE_ENV', '').startswith('standard'):
