@@ -65,19 +65,10 @@ def user_edit_profile_page(request):
 
 def search_page(request):
     if "search_results" in request.session:
-        artist_result = request.session["search_results"][0]
-        track_result = request.session["search_results"][1]
-        album_result = request.session["search_results"][2]
+        artists = request.session["search_results"][0]
+        tracks = request.session["search_results"][1]
+        albums = request.session["search_results"][2]
 
-        # for i in range(len(artist_result)):
-        #     print(artist_result[i]["name"])
-        #     artist = artist_result[i]
-        #     print(artist)
+        print(len(tracks))
 
-        # for i in range(len(track_result)):
-        #     print(track_result[i]["name"])
-
-        # for i in range(len(album_result)):
-        #     print(album_result[i]["name"])
-
-    return render(request, "signed-in/search_page.html", {})
+    return render(request, "signed-in/search_page.html", {"artists": artists, "tracks": tracks, "albums": albums})

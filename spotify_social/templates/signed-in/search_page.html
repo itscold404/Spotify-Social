@@ -1,5 +1,71 @@
 {% extends "signed-in/base.html"%}
 
 {% block content %}
-<h1>searched content</h1>
+    <h2>ARTISTS</h2>
+    {% for artist in artists %}
+        <div class="card">
+            <div class="row">
+                <div class="col col-md-6">
+                    <img src="{{artist.3}}" class="img-fluid artist-image" alt="Responsive image">
+                </div>
+
+                <div class="col col-md-6">
+                    <input type="hidden" id="a{{artist.0}}" name="artistID" value="{{artist.0}}" />
+                    <div class="card-body">
+                        {{artist.1}} -- Followers: {{artist.2}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <br></br>
+    <h2>SONGS</h2>
+    {% for track in tracks %}
+        <div class="card">
+            <div class="row">
+                <div class="col col-md-6">
+                    <input type="hidden" id="t{{track.0}}" name="trackID" value="{{track.0}}" />
+                    <div class="card-body">
+                        {{track.1}} by:
+                        {% for a in track.2 %}
+                            {{a}}, 
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    <br></br>
+    <h2>ALBUMS</h2>
+    {% for album in albums %}
+        <div class="card">
+            <div class="row">
+                <div class="col col-md-6">
+                    <img src="{{album.3}}" class="img-fluid album-image" alt="Responsive image">
+                </div>
+
+                <div class="col col-md-6">
+                    <input type="hidden" id="al{{album.0}}" name="albumID" value="{{album.0}}" />
+                    <div class="card-body">
+                        {{track.1}} by:
+                        {% for a in album.4 %}
+                            {{a}}, 
+                        {% endfor %}
+                        Number of tracks: {{album.2}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+    <style>
+        .artist-image {
+            width: 20%; 
+            height: auto; 
+        }
+        .album-image {
+            width: 20%; 
+            height: auto; 
+        }
+    </style>
 {% endblock %}

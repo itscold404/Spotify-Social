@@ -213,73 +213,134 @@ def delete_profile(request):
 # ----------------------------------------------------------------------------
 # Fills the database if the ID's of artists, tracks, albums do not exist
 # ----------------------------------------------------------------------------
-def fill_database(type: str, search_result: list):
+def fill_database(search_result: list):
+    # search_result index: 0 = artists, 1 = tracks, 2 = albums
     db = Database()
     needs_update = False
 
-    if type == "artist":
-        for i in range(len(search_result)):
-            print(search_result[i]["name"])
-            artist = search_result[i]
-            query_result = db.execute(
-                "SELECT * FROM artist WHERE artist_id = %s;", (artist["id"],), True
+    # fill artists table
+    for i in range(len(search_result[0])):
+        print(search_result[0][i]["name"])
+        artist = search_result[0][i]
+        query_result = db.execute(
+            "SELECT * FROM artist WHERE artist_id = %s;", (artist["id"],), True
+        )
+
+        if query_result[0] == 0:
+            db.execute(
+                """                    
+                INSERT INTO artist (artist_id, artist_name)
+                VALUES (%s, %s);
+                """,
+                (artist["id"], artist["name"]),
+                False,
             )
+            needs_update = True
 
-            if query_result[0] == 0:
-                db.execute(
-                    """                    
-                    INSERT INTO artist (artist_id, artist_name)
-                    VALUES (%s, %s);
-                    """,
-                    (artist["id"], artist["name"]),
-                    False,
-                )
-                needs_update = True
+    # fill songs table
+    for i in range(len(search_result[1])):
+        print(search_result[1][i]["name"])
+        track = search_result[1][i]
+        query_result = db.execute(
+            "SELECT * FROM song WHERE song_id = %s;", (track["id"],), True
+        )
 
-    elif type == "track":
-        for i in range(len(search_result)):
-            print(search_result[i]["name"])
-            track = search_result[i]
-            query_result = db.execute(
-                "SELECT * FROM song WHERE song_id = %s;", (track["id"],), True
+        if query_result[0] == 0:
+            db.execute(
+                """                    
+                INSERT INTO song (song_id, song_name)
+                VALUES (%s, %s);
+                """,
+                (track["id"], track["name"]),
+                False,
             )
+            needs_update = True
 
-            if query_result[0] == 0:
-                db.execute(
-                    """                    
-                    INSERT INTO song (song_id, song_name)
-                    VALUES (%s, %s);
-                    """,
-                    (track["id"], track["name"]),
-                    False,
-                )
-                needs_update = True
+    # fill albums table
+    for i in range(len(search_result[2])):
+        print(search_result[2][i]["name"])
+        album = search_result[2][i]
+        query_result = db.execute(
+            "SELECT * FROM album WHERE album_id = %s;", (album["id"],), True
+        )
 
-    elif type == "album":
-        for i in range(len(search_result)):
-            print(search_result[i]["name"])
-            album = search_result[i]
-            query_result = db.execute(
-                "SELECT * FROM album WHERE album_id = %s;", (album["id"],), True
+        if query_result[0] == 0:
+            db.execute(
+                """                    
+                INSERT INTO album (album_id, title)
+                VALUES (%s, %s);
+                """,
+                (album["id"], album["name"]),
+                False,
             )
-
-            if query_result[0] == 0:
-                db.execute(
-                    """                    
-                    INSERT INTO album (album_id, title)
-                    VALUES (%s, %s);
-                    """,
-                    (album["id"], album["name"]),
-                    False,
-                )
-                needs_update = True
+            needs_update = True
 
     if needs_update:
         db.update_db_and_close()
     else:
         db.close()
 
+# ----------------------------------------------------------------------------
+# Creates a list to store display info on search page of artist, album, track
+# ----------------------------------------------------------------------------
+def get_search_display_info(matches):
+    # matches index: 0 = artists, 1 = tracks, 2 = albums
+    display_info = []
+    
+    artist_result = []
+    for i in range(len(matches[0])):
+        artist = matches[0][i]
+        info = [
+            artist["id"],
+            artist["name"],
+            artist["followers"]["total"],
+            artist["images"][0]["url"],
+        ]
+        artist_result.append(info)
 
+    track_result = []
+    print("tracks")
+    print("length of input", len(matches[1]))
+    for i in range(len(matches[1])):
+        track = matches[1][i]
+        info = [
+            track["id"],
+            track["name"],
+        ]
+
+        track_artist = []
+        for a in track["artists"]:
+            track_artist.append(a["name"])
+
+        info.append(track_artist)
+
+        track_result.append(info)
+        print(info)
+    
+    album_result = []
+    for i in range(len(matches[2])):
+        album = matches[2][i]
+        info = [
+            album["id"],
+            album["name"],
+            album["total_tracks"],
+            album["images"][0]["url"],
+        ]
+
+        album_artist = []
+        for a in album["artists"]:
+            album_artist.append(a["name"])
+
+        info.append(album_artist)
+
+        album_result.append(info)
+        
+    display_info.append(artist_result)
+    display_info.append(track_result)
+    display_info.append(album_result)
+    
+    return display_info
+    
 # ----------------------------------------------------------------------------
 # Deletes the user profile
 # ----------------------------------------------------------------------------
@@ -295,47 +356,11 @@ def search(request):
             track_matches = api.search_for("track", searched_phrase, SEARCH_LIMIT_TRACK)
             album_matches = api.search_for("album", searched_phrase, SEARCH_LIMIT_ALBUM)
 
-            fill_database("artist", artist_matches)
-            fill_database("track", track_matches)
-            fill_database("album", album_matches)
+            matches = [artist_matches, track_matches, album_matches]
+            fill_database(matches)
+            display_info = get_search_display_info(matches)
 
-            artist_result = []
-            track_result = []
-            album_result = []
-
-            for i in range(len(artist_matches)):
-                artist = artist_matches[i]
-                info = [
-                    artist["id"],
-                    artist["name"],
-                    artist["followers"]["total"],
-                    artist["images"][0]["url"],
-                ]
-                artist_result.append(info)
-                print(info)
-
-            for i in range(len(track_matches)):
-                track = track_matches[i]
-                info = [
-                    track["id"],
-                    track["name"],
-                ]
-
-                track_artist = []
-
-                for a in track["artist"]:
-                    track_artist.append(a["name"])
-
-                info.append(track_artist)
-
-                track_result.append(info)
-                print(info)
-
-            request.session["search_results"] = (
-                artist_result,
-                track_result,
-                album_result,
-            )
+            request.session["search_results"] = display_info
 
             return redirect(reverse("search_page"))
         else:
