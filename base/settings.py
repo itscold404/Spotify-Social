@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
-from decouple import config
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -84,11 +84,12 @@ import pymysql
 pymysql.version_info = (1, 4, 6, 'final', 0)
 pymysql.install_as_MySQLdb()
 
-db_user = config('CLOUD_SQL_USERNAME')  
-db_pass = config('CLOUD_SQL_PASSWORD')
-db_name = config('CLOUD_SQL_DATABASE_NAME')
-host = config('HOST')
-
+load_dotenv()
+db_user = os.getenv('CLOUD_SQL_USERNAME')  
+db_pass = os.getenv('CLOUD_SQL_PASSWORD')
+db_name = os.getenv('CLOUD_SQL_DATABASE_NAME')
+host = os.getenv('HOST')
+        
 if os.getenv('GAE_APPLICATION', None):
     # Running on production App Engine, so connect to Google cloud sql using
     # the unix socket at /cloudsql/<your-cloudsql-connection string>
@@ -158,9 +159,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_ROOT = "static"
-STATIC_URL = "/static/"
-STATICFILES_DIRS = []
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Collected static files for production
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'static',  # Your source static files for development
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

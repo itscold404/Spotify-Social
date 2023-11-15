@@ -1,14 +1,15 @@
 import os
 import MySQLdb
-from decouple import config
+from dotenv import load_dotenv
   
 class Database:
     def __init__(self):
-        db_user = config('CLOUD_SQL_USERNAME')  
-        db_pass = config('CLOUD_SQL_PASSWORD')
-        db_name = config('CLOUD_SQL_DATABASE_NAME', 'spotifySocial_dummy')
-        db_socket_dir = config('DB_SOCKET_DIR', '/cloudsql')
-        instance_connection_name = config('INSTANCE_CONNECTION_NAME')
+        load_dotenv()
+        db_user = os.getenv('CLOUD_SQL_USERNAME')  
+        db_pass = os.getenv('CLOUD_SQL_PASSWORD')
+        db_name = os.getenv('CLOUD_SQL_DATABASE_NAME')
+        db_socket_dir = os.getenv('DB_SOCKET_DIR')
+        instance_connection_name = os.getenv('INSTANCE_CONNECTION_NAME')
 
         # Check if running on GAE
         if os.environ.get('GAE_ENV', '').startswith('standard'):
@@ -31,7 +32,10 @@ class Database:
                 db=db_name
             )
             
-    def execute(self, query:str, args:tuple, returnResult):
+    #----------------------------------------------------------------------------
+    # executes the sql query 
+    #----------------------------------------------------------------------------
+    def execute(self, query:str, args:tuple, returnResult:bool):
         self.cursor = self.connection.cursor()
         
         num_matches = self.cursor.execute(query, args)
@@ -40,11 +44,16 @@ class Database:
         if returnResult:
             return (num_matches, matches)
     
+    #----------------------------------------------------------------------------
+    # update and close the database connection
+    #----------------------------------------------------------------------------
     def update_db_and_close(self):
         self.connection.commit()
-        self.cursor.close()
-        self.connection.close()
-        
+        self.close()
+    
+    #----------------------------------------------------------------------------
+    # closes the database connection without updating the database
+    #----------------------------------------------------------------------------
     def close(self):
         self.cursor.close()
         self.connection.close()

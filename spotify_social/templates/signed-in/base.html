@@ -1,4 +1,4 @@
-{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+{% load static %}{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -6,23 +6,61 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Login Page</title>
-        <link
-        rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
         <link rel="stylesheet" href="style.css" />
 
-        <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #525E9B;">
-        <a class="navbar-brand" href="{% url 'user_home_page' %}">Spotify Social</a>
-        <a class="navbar-brand" href="{% url 'logout' %}">Log Out</a>
-        <a class="navbar-brand" href="{% url 'user_profile_page' %}">Profile</a>
+        <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #525e9b">
+            <a class="navbar-brand" href="{% url 'user_home_page' %}">Spotify Social</a>
+            <a class="navbar-brand" href="{% url 'logout' %}">Log Out</a>
+            <a class="navbar-brand" href="{% url 'user_profile_page' %}">Profile</a>
+
+            <form id="APISearchForm" action="{%url 'search'%}" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <div class="form-outline">
+                        <input
+                            id="search-focus"
+                            type="search"
+                            id="form1"
+                            placeholder="Search Artist, Song, Albumn"
+                            class="form-control"
+                            name="searched-phrase"
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
         </nav>
     </head>
     <br />
     <br />
-    {% block content %}
-    {% endblock %}
+    {% block content %} {% endblock %}
     <body>
+        {% comment %}
+        <script>
+            const searchFocus = document.getElementById("search-focus");
+            const keys = [
+                { keyCode: "AltLeft", isTriggered: false },
+                { keyCode: "ControlLeft", isTriggered: false },
+            ];
+
+            window.addEventListener("keydown", (e) => {
+                keys.forEach((obj) => {
+                    if (obj.keyCode === e.code) {
+                        obj.isTriggered = true;
+                    }
+                });
+
+                const shortcutTriggered = keys.filter((obj) => obj.isTriggered).length === keys.length;
+
+                if (shortcutTriggered) {
+                    document.getElementById("APISearchForm").submit();
+                }
+            });
+        </script>
+        {% endcomment %}
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/esm/popper"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
