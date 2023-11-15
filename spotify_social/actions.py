@@ -220,7 +220,6 @@ def fill_database(search_result: list):
 
     # fill artists table
     for i in range(len(search_result[0])):
-        print(search_result[0][i]["name"])
         artist = search_result[0][i]
         query_result = db.execute(
             "SELECT * FROM artist WHERE artist_id = %s;", (artist["id"],), True
@@ -239,7 +238,6 @@ def fill_database(search_result: list):
 
     # fill songs table
     for i in range(len(search_result[1])):
-        print(search_result[1][i]["name"])
         track = search_result[1][i]
         query_result = db.execute(
             "SELECT * FROM song WHERE song_id = %s;", (track["id"],), True
@@ -258,7 +256,6 @@ def fill_database(search_result: list):
 
     # fill albums table
     for i in range(len(search_result[2])):
-        print(search_result[2][i]["name"])
         album = search_result[2][i]
         query_result = db.execute(
             "SELECT * FROM album WHERE album_id = %s;", (album["id"],), True
@@ -294,13 +291,16 @@ def get_search_display_info(matches):
             artist["id"],
             artist["name"],
             artist["followers"]["total"],
-            artist["images"][0]["url"],
         ]
+
+        if len(artist["images"]) > 0:
+            info.append(artist["images"][0]["url"])
+        else:
+            info.append([])
+            
         artist_result.append(info)
 
     track_result = []
-    print("tracks")
-    print("length of input", len(matches[1]))
     for i in range(len(matches[1])):
         track = matches[1][i]
         info = [
@@ -324,9 +324,13 @@ def get_search_display_info(matches):
             album["id"],
             album["name"],
             album["total_tracks"],
-            album["images"][0]["url"],
         ]
 
+        if len(album["images"]) > 0:
+            info.append(album["images"][0]["url"])
+        else:
+            info.append([])
+        
         album_artist = []
         for a in album["artists"]:
             album_artist.append(a["name"])
