@@ -89,12 +89,6 @@ db_user = os.getenv('CLOUD_SQL_USERNAME')
 db_pass = os.getenv('CLOUD_SQL_PASSWORD')
 db_name = os.getenv('CLOUD_SQL_DATABASE_NAME')
 host = os.getenv('HOST')
-
-print("in settings")
-print(db_user)
-print(db_pass)
-print(db_name)
-print(host)
         
 if os.getenv('GAE_APPLICATION', None):
     # Running on production App Engine, so connect to Google cloud sql using

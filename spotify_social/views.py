@@ -53,3 +53,7 @@ def user_profile_page(request):
 
 def user_edit_profile_page(request):
     return render(request, 'signed-in/edit_profile_page.html', {})
+
+
+def search_page(request):
+    return render(request, 'signed-in/search_page.html', {})

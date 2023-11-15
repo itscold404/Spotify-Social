@@ -30,16 +30,17 @@ class Spotify_API:
         result = post(url, headers = headers, data = data)
         json_result = json.loads(result.content)
         token = json_result["access_token"]
-        #print(token)
         
-        # self.auth_header = {"Authorization": "Bearer " + token}
-        self.auth_header = {"Authorization": "Bearer " + "BQC2BgR5IBrQ48qAk2liwhO7HbRRPfPq_0UwEboGbGnPQaQwzJ830FGdqT-dygrTdmaGsT4KhxssQB8zEXsO9VzcBpx5dnrnscke-6Dtm76ihGjj1CQ"}
+        self.auth_header = {"Authorization": "Bearer " + token}
+        
+        # expired token for testing
+        # self.auth_header = {"Authorization": "Bearer " + "BQC2BgR5IBrQ48qAk2liwhO7HbRRPfPq_0UwEboGbGnPQaQwzJ830FGdqT-dygrTdmaGsT4KhxssQB8zEXsO9VzcBpx5dnrnscke-6Dtm76ihGjj1CQ"}
     
     # Searches for artist, track, or album
     # type is the item_type of the item ("artist", "track", "album")
     # name is the name of the item you are searching for
     # limit is how many of the item you want
-    def search_for(self, item_type, name, limit):
+    def search_for(self, item_type:str, name:str, limit:int):
         url = "https://api.spotify.com/v1/search"
         headers = self.auth_header
         query = f"?q={name}&type={item_type}&limit={limit}"
@@ -47,53 +48,44 @@ class Spotify_API:
         query_url = url + query
         result = get(query_url, headers=headers)
         
-        # bad/expired token
-        result1 = json.loads(result.content)
-        
-        print(result, type(result1))
-        for res in result1:
-            print(res, type(res))
+        loaded_content = json.loads(result.content)
             
-        if "error" in result1 and result1["error"]["status"] == 401:
-            print("error number was", result1["error"]["status"])
+        if "error" in loaded_content and loaded_content["error"]["status"] == 401:
+            print("error found")
+            self.authorize()
+            return self.search_for(item_type, name, limit)
+        else:
+            json_result = loaded_content[f"{item_type}s"]["items"]
             
-            # self.authorize()
-            # return self.search_for(item_type, name, limit)
-        
-        json_result = json.loads(result.content)[f"{item_type}s"]["items"]
-        
-        if len(json_result) == 0:
-            return None
-        
-        return json_result
+            if len(json_result) == 0:
+                return None
+            
+            return json_result
     
     # TODO: songs have a preview url
     # Search for the top tracks by an artist in the US
-    def get_songs_by_artist(self, artist_id):
+    def get_songs_by_artist(self, artist_id:str):
         url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?country=US"
         headers = self.auth_header
         result = get(url, headers=headers)
+        loaded_content = json.loads(result.content)
         
-        # bad/expired token
-        if "error" in result:
-            print("error number was", result["error"])
-            
-            # self.authorize()
-            # return self.get_songs_by_artist(artist_id)
-        
-        json_result = json.loads(result.content)["tracks"]
-        return json_result
+        if "error" in loaded_content and loaded_content["error"]["status"] == 401:
+            self.authorize()
+            return self.get_songs_by_artist(artist_id)
+        else:
+            json_result = loaded_content["tracks"]
+            return json_result
         
         
 
+# spot = Spotify_API()
+# spot.authorize()
 
-spot = Spotify_API()
-spot.authorize()
+# artist_id = spot.search_for("artist", "IU", 1)[0]["id"]
+# print(artist_id)
+# #print(artist_id)
+# songs = spot.get_songs_by_artist("3HqSLMAZ3g3d5poNaI7GOU")
 
-artist_id = spot.search_for("artist", "IU", 1)[0]["id"]
-
-#print(artist_id)
-songs = spot.get_songs_by_artist(artist_id)
-
-for idx, song in enumerate(songs):
-    print(str(idx) + ". " + song["name"])
+# for idx, song in enumerate(songs):
+#     print(str(idx) + ". " + song["name"])

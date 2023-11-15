@@ -10,13 +10,6 @@ class Database:
         db_name = os.getenv('CLOUD_SQL_DATABASE_NAME')
         db_socket_dir = os.getenv('DB_SOCKET_DIR')
         instance_connection_name = os.getenv('INSTANCE_CONNECTION_NAME')
-        
-        print("in databases------------------")
-        print(db_user)
-        print(db_pass)
-        print(db_name)
-        print(db_socket_dir)
-        print(instance_connection_name)
 
         # Check if running on GAE
         if os.environ.get('GAE_ENV', '').startswith('standard'):
@@ -39,7 +32,10 @@ class Database:
                 db=db_name
             )
             
-    def execute(self, query:str, args:tuple, returnResult):
+    #----------------------------------------------------------------------------
+    # executes the sql query 
+    #----------------------------------------------------------------------------
+    def execute(self, query:str, args:tuple, returnResult:bool):
         self.cursor = self.connection.cursor()
         
         num_matches = self.cursor.execute(query, args)
@@ -48,11 +44,16 @@ class Database:
         if returnResult:
             return (num_matches, matches)
     
+    #----------------------------------------------------------------------------
+    # update and close the database connection
+    #----------------------------------------------------------------------------
     def update_db_and_close(self):
         self.connection.commit()
-        self.cursor.close()
-        self.connection.close()
-        
+        self.close()
+    
+    #----------------------------------------------------------------------------
+    # closes the database connection without updating the database
+    #----------------------------------------------------------------------------
     def close(self):
         self.cursor.close()
         self.connection.close()

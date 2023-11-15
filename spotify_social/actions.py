@@ -1,8 +1,9 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from spotify_social.utils import *
+from spotify_social.database import *
 from django.http import HttpResponse
+from spotify_social.spotify_api import *
 import bcrypt
 
 #----------------------------------------------------------------------------
@@ -151,3 +152,36 @@ def logout(request):
         messages.success(request, "You have logged out")
     
     return redirect(reverse('login_page'))
+
+#----------------------------------------------------------------------------
+# Deletes the user profile
+#----------------------------------------------------------------------------
+def delete_profile(request):
+    user_name = request.session[user_name]
+    
+    db = Database()
+    db.execute('''
+               DELETE FROM user_profile WHERE user_name=%s;
+               ''', (user_name, ), False)
+    db.update_db_and_close()
+    
+    if 'user_id' in request.session:
+        del request.session['user_id']
+        messages.success(request, "Account deleted successfully")
+    
+    return redirect(reverse('login_page'))
+
+
+#----------------------------------------------------------------------------
+# Deletes the user profile
+#----------------------------------------------------------------------------
+def search(request):
+    print("reached")
+    if request.method == "POST":
+        searched_phrase = request.POST.get("searched-phrase")
+        print(searched_phrase)
+        
+        api = Spotify_API()
+        api.search_for(request.POST.get("searched-phrase"))
+        request.session["search_result"] = ""
+        #return redirect(reverse('search_page'))
