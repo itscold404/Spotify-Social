@@ -191,20 +191,22 @@ def logout(request):
 # Deletes the user profile
 # ----------------------------------------------------------------------------
 def delete_profile(request):
-    user_name = request.session[user_name]
-
-    db = Database()
-    db.execute(
-        """
-        DELETE FROM user_profile WHERE user_name=%s;
-        """,
-        (user_name,),
-        False,
-    )
-    db.update_db_and_close()
-
     if "user_id" in request.session:
-        del request.session["user_id"]
+        user_name = request.session["user_id"]
+
+        db = Database()
+        db.execute(
+            """
+            DELETE FROM user_profile WHERE user_name=%s;
+            """,
+            (user_name,),
+            False,
+        )
+        db.update_db_and_close()
+
+        if "user_id" in request.session:
+            del request.session["user_id"]
+
         messages.success(request, "Account deleted successfully")
 
     return redirect(reverse("login_page"))
@@ -277,13 +279,14 @@ def fill_database(search_result: list):
     else:
         db.close()
 
+
 # ----------------------------------------------------------------------------
 # Creates a list to store display info on search page of artist, album, track
 # ----------------------------------------------------------------------------
 def get_search_display_info(matches):
     # matches index: 0 = artists, 1 = tracks, 2 = albums
     display_info = []
-    
+
     artist_result = []
     for i in range(len(matches[0])):
         artist = matches[0][i]
@@ -297,7 +300,7 @@ def get_search_display_info(matches):
             info.append(artist["images"][0]["url"])
         else:
             info.append([])
-            
+
         artist_result.append(info)
 
     track_result = []
@@ -316,7 +319,7 @@ def get_search_display_info(matches):
 
         track_result.append(info)
         print(info)
-    
+
     album_result = []
     for i in range(len(matches[2])):
         album = matches[2][i]
@@ -330,7 +333,7 @@ def get_search_display_info(matches):
             info.append(album["images"][0]["url"])
         else:
             info.append([])
-        
+
         album_artist = []
         for a in album["artists"]:
             album_artist.append(a["name"])
@@ -338,13 +341,14 @@ def get_search_display_info(matches):
         info.append(album_artist)
 
         album_result.append(info)
-        
+
     display_info.append(artist_result)
     display_info.append(track_result)
     display_info.append(album_result)
-    
+
     return display_info
-    
+
+
 # ----------------------------------------------------------------------------
 # Deletes the user profile
 # ----------------------------------------------------------------------------

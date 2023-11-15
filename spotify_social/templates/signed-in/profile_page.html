@@ -1,69 +1,64 @@
-{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+{% extends "signed-in/base.html"%} {% block content%}
+<a type="button" class="btn btn-primary" href="{% url 'user_edit_profile_page' %}">edit profile</a>
+<a type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirm">Delete Account</a>
 
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Login Page</title>
-        <link
-        rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        />
-        <link rel="stylesheet" href="style.css" />
+{% if messages %} {% for message in messages %}
+<div class="alert alert-{{ message.tags }}">
+    {{ message }}
+    <button type="button" class="close" data-dismiss="alert">×</button>
+</div>
+{% endfor %} {% endif %}
 
-        <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #525E9B;">
-        <a class="navbar-brand" href="{% url 'user_home_page' %}">Spotify Social</a>
-        <a class="navbar-brand" href="{% url 'logout' %}">Log Out</a>
-        </nav>
-    </head>
-    <br />
-    <br />
-    <a class="navbar-brand" href="{% url 'user_edit_profile_page' %}">edit profile</a>
+<table>
+    <thead>
+        <tr>
+            <th>user_name</th>
+            <th>number_of_posts</th>
+            <th>school</th>
+            <th>area_of_study</th>
+            <th>comp_id</th>
+            <th>bio</th>
+            <th>full_name</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in results %}
+        <tr>
+            <td>{{ row.0 }}</td>
+            <td>{{ row.1 }}</td>
+            <td>{{ row.3 }}</td>
+            <td>{{ row.4 }}</td>
+            <td>{{ row.5 }}</td>
+            <td>{{ row.6 }}</td>
+            <td>{{ row.7 }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">
-                {{ message }}
-                <button type="button" class="close" data-dismiss="alert">
-                ×
+<!-- Modal -->
+<div
+    class="modal fade"
+    id="deleteConfirm"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="deleteConfirmLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteConfirmLabel">Deleting Account</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-        {% endfor %}
-    {% endif %}
-
-    <table>
-        <thead>
-            <tr>
-                <th>user_name</th>
-                <th>number_of_posts</th>
-                <th>school</th>
-                <th>area_of_study</th>
-                <th>comp_id</th>
-                <th>bio</th>
-                <th>full_name</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for row in results %}
-                <tr>
-                    <td>{{ row.0 }}</td>
-                    <td>{{ row.1 }}</td>
-                    <td>{{ row.3 }}</td>
-                    <td>{{ row.4 }}</td>
-                    <td>{{ row.5 }}</td>
-                    <td>{{ row.6 }}</td>
-                    <td>{{ row.7 }}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-
-    <body>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/esm/popper"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    </body>
-</html>
-
+            <div class="modal-body">Are you sure you want to DELETE your account?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">keep account</button>
+                <button type="button" class="btn btn-danger">DELETE account</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
