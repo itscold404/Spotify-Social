@@ -267,59 +267,61 @@ def fill_database(search_result: list):
     db = Database()
     needs_update = False
 
-    # fill artists table
-    for i in range(len(search_result[0])):
-        artist = search_result[0][i]
-        query_result = db.execute(
-            "SELECT * FROM artist WHERE artist_id = %s;", (artist["id"],), True
-        )
-
-        if query_result[0] == 0:
-            db.execute(
-                """                    
-                INSERT INTO artist (artist_id, artist_name)
-                VALUES (%s, %s);
-                """,
-                (artist["id"], artist["name"]),
-                False,
+    if len(search_result) >= 2:
+        # fill artists table
+        for i in range(len(search_result[0])):
+            artist = search_result[0][i]
+            query_result = db.execute(
+                "SELECT * FROM artist WHERE artist_id = %s;", (artist["id"],), True
             )
-            needs_update = True
 
-    # fill songs table
-    for i in range(len(search_result[1])):
-        track = search_result[1][i]
-        query_result = db.execute(
-            "SELECT * FROM song WHERE song_id = %s;", (track["id"],), True
-        )
+            if query_result[0] == 0:
+                db.execute(
+                    """                    
+                    INSERT INTO artist (artist_id, artist_name)
+                    VALUES (%s, %s);
+                    """,
+                    (artist["id"], artist["name"]),
+                    False,
+                )
+                needs_update = True
 
-        if query_result[0] == 0:
-            db.execute(
-                """                    
-                INSERT INTO song (song_id, song_name)
-                VALUES (%s, %s);
-                """,
-                (track["id"], track["name"]),
-                False,
+        # fill songs table
+        for i in range(len(search_result[1])):
+            track = search_result[1][i]
+            query_result = db.execute(
+                "SELECT * FROM song WHERE song_id = %s;", (track["id"],), True
             )
-            needs_update = True
 
-    # fill albums table
-    for i in range(len(search_result[2])):
-        album = search_result[2][i]
-        query_result = db.execute(
-            "SELECT * FROM album WHERE album_id = %s;", (album["id"],), True
-        )
+            if query_result[0] == 0:
+                db.execute(
+                    """                    
+                    INSERT INTO song (song_id, song_name)
+                    VALUES (%s, %s);
+                    """,
+                    (track["id"], track["name"]),
+                    False,
+                )
+                needs_update = True
 
-        if query_result[0] == 0:
-            db.execute(
-                """                    
-                INSERT INTO album (album_id, title)
-                VALUES (%s, %s);
-                """,
-                (album["id"], album["name"]),
-                False,
+    if len(search_result) >= 3:
+        # fill albums table
+        for i in range(len(search_result[2])):
+            album = search_result[2][i]
+            query_result = db.execute(
+                "SELECT * FROM album WHERE album_id = %s;", (album["id"],), True
             )
-            needs_update = True
+
+            if query_result[0] == 0:
+                db.execute(
+                    """                    
+                    INSERT INTO album (album_id, title)
+                    VALUES (%s, %s);
+                    """,
+                    (album["id"], album["name"]),
+                    False,
+                )
+                needs_update = True
 
     if needs_update:
         db.update_db_and_close()
@@ -330,74 +332,76 @@ def fill_database(search_result: list):
 # ----------------------------------------------------------------------------
 # Creates a list to store display info on search page of artist, album, track
 # ----------------------------------------------------------------------------
-def get_search_display_info(matches):
+def get_search_display_info(matches:list):
     # matches index: 0 = artists, 1 = tracks, 2 = albums
     display_info = []
+    if len(matches) >= 2:
+        artist_result = []
+        for i in range(len(matches[0])):
+            artist = matches[0][i]
+            info = [
+                artist["id"],
+                artist["name"],
+                artist["followers"]["total"],
+            ]
 
-    artist_result = []
-    for i in range(len(matches[0])):
-        artist = matches[0][i]
-        info = [
-            artist["id"],
-            artist["name"],
-            artist["followers"]["total"],
-        ]
+            if len(artist["images"]) > 0:
+                info.append(artist["images"][0]["url"])
+            else:
+                info.append([])
 
-        if len(artist["images"]) > 0:
-            info.append(artist["images"][0]["url"])
-        else:
-            info.append([])
+            artist_result.append(info)
 
-        artist_result.append(info)
+        track_result = []
+        for i in range(len(matches[1])):
+            track = matches[1][i]
+            info = [
+                track["id"],
+                track["name"],
+            ]
 
-    track_result = []
-    for i in range(len(matches[1])):
-        track = matches[1][i]
-        info = [
-            track["id"],
-            track["name"],
-        ]
+            track_artist = []
+            for a in track["artists"]:
+                track_artist.append(a["name"])
 
-        track_artist = []
-        for a in track["artists"]:
-            track_artist.append(a["name"])
+            info.append(track_artist)
 
-        info.append(track_artist)
+            track_result.append(info)
+            print(info)
+            
+        display_info.append(artist_result)
+        display_info.append(track_result)
+        
+    if len(matches) >= 3:
+        album_result = []
+        for i in range(len(matches[2])):
+            album = matches[2][i]
+            info = [
+                album["id"],
+                album["name"],
+                album["total_tracks"],
+            ]
 
-        track_result.append(info)
-        print(info)
+            if len(album["images"]) > 0:
+                info.append(album["images"][0]["url"])
+            else:
+                info.append([])
 
-    album_result = []
-    for i in range(len(matches[2])):
-        album = matches[2][i]
-        info = [
-            album["id"],
-            album["name"],
-            album["total_tracks"],
-        ]
+            album_artist = []
+            for a in album["artists"]:
+                album_artist.append(a["name"])
 
-        if len(album["images"]) > 0:
-            info.append(album["images"][0]["url"])
-        else:
-            info.append([])
+            info.append(album_artist)
 
-        album_artist = []
-        for a in album["artists"]:
-            album_artist.append(a["name"])
+            album_result.append(info)
 
-        info.append(album_artist)
-
-        album_result.append(info)
-
-    display_info.append(artist_result)
-    display_info.append(track_result)
-    display_info.append(album_result)
+        display_info.append(album_result)
 
     return display_info
 
-
 # ----------------------------------------------------------------------------
-# Deletes the user profile
+# sends request to spotify api to get artists, tracks, ablumbs that matches
+# what the user is searching for
 # ----------------------------------------------------------------------------
 def search(request):
     if request.method == "POST":
@@ -420,8 +424,30 @@ def search(request):
 
                 request.session["search_results"] = display_info
 
-                print(api.get_user_top_items())
                 return redirect(reverse("search_page"))
 
             # TODO: search on other pages will also redirect to user home page
         return redirect(reverse("user_home_page"))
+    
+# ----------------------------------------------------------------------------
+# retrieve information (user top tracks and artists) from spotify api 
+# to load in user profile
+# ----------------------------------------------------------------------------
+def load_profile(request):
+    if "code" in request.session:
+        api = Spotify_API(request.session["code"])
+        api.get_token()
+        result = api.get_user_top_items()["items"]
+        print("user", result)
+
+        # matches = [artist_matches, track_matches, album_matches]
+        # fill_database(matches)
+        # display_info = get_search_display_info(matches)
+
+        # request.session["search_results"] = display_info
+
+        # print(api.get_user_top_items())
+        return redirect(reverse("search_page"))
+
+    # TODO: search on other pages will also redirect to user home page
+    return redirect(reverse("user_home_page"))

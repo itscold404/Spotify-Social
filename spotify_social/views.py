@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from spotify_social.database import *
-from spotify_social.actions import get_callback
+from spotify_social.actions import get_callback, load_profile
 
 
 # Shows the user the landing page. This should be the first page they see
@@ -58,6 +58,8 @@ def user_profile_page(request):
         (user_name,),
         True,
     )
+    
+    items = load_profile(request)
 
     return render(request, "signed-in/profile_page.html", {"results": result[1]})
 

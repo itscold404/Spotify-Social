@@ -104,17 +104,16 @@ class Spotify_API:
         url = f"https://api.spotify.com/v1/me/top/{type}"
         headers = self.auth_header
         result = get(url, headers=headers)
-        print(result)
         loaded_content = json.loads(result.content)
         
-        # if "error" in loaded_content and loaded_content["error"]["status"] == 401:
-        #     self.get_token()
-        #     return self.get_user_top_items(type)
-        # else:
-        print(loaded_content)
-        json_result = loaded_content["items"]
-        print(json_result)
-        return json_result
+        if "error" in loaded_content and loaded_content["error"]["status"] == 401:
+            self.get_token()
+            return self.get_user_top_items(type)
+        else:
+            # print(loaded_content)
+            json_result = loaded_content["items"]
+            # print(json_result)
+            return json_result
         
         
 
