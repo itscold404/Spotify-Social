@@ -4,13 +4,71 @@ import base64
 from requests import post, get
 import json
 
+from django.shortcuts import redirect
+from django.http import JsonResponse
+import urllib
+
 load_dotenv()
 
 client_id = os.getenv("SPOTIFY_CLIENT_ID")
 client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
+REDIRECT_URI = 'http://127.0.0.1:8000/home'
 
 # number of songs or artist to retrieve from
 LIMIT = 5
+
+# Spotify URLs
+SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize"
+SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token"
+SPOTIFY_API_BASE_URL = "https://api.spotify.com"
+VERSION = "v1"
+SPOTIFY_API_URL = f"{SPOTIFY_API_BASE_URL}/{VERSION}"
+
+# Server-side Parameters
+SCOPE = "user-top-read"
+STATE = ""
+SHOW_DIALOG_bool = True
+SHOW_DIALOG_str = str(SHOW_DIALOG_bool).lower()
+
+auth_query_parameters = {
+    "response_type": "code",
+    "redirect_uri": REDIRECT_URI,
+    "scope": SCOPE,
+    "client_id": client_id
+}
+
+def index(request):
+    url_args = "&".join(["{}={}".format(key, urllib.parse.quote(val)) for key, val in auth_query_parameters.items()])
+    auth_url = f"https://accounts.spotify.com/authorize/?{url_args}"
+    return redirect(auth_url)
+
+
+def callback(request):
+    # Requests refresh and access tokens
+    auth_token = request.args['code']
+    code_payload = {
+        "grant_type": "authorization_code",
+        "code": str(auth_token),
+        "redirect_uri": REDIRECT_URI
+    }
+    base64encoded = base64.urlsafe_b64encode(f"{client_id}:{client_secret}".encode()).decode()
+    headers = {"Authorization": f"Basic {base64encoded}"}
+    post_request = request.post(SPOTIFY_TOKEN_URL, data=code_payload, headers=headers)
+
+    # Tokens are returned to the app
+    response_data = post_request.json()
+    access_token = response_data["access_token"]
+
+    # Use the access token to access Spotify API
+    authorization_header = {"Authorization": f"Bearer {access_token}"}
+
+    # Get user's top tracks
+    user_top_tracks_endpoint = f"{SPOTIFY_API_URL}/me/top/tracks"
+    top_tracks_response = request.get(user_top_tracks_endpoint, headers=authorization_header)
+    top_tracks_data = top_tracks_response.json()
+
+    print(top_tracks_data)
+    return top_tracks_data
 
 class Spotify_API:
     def __init__(self):
@@ -85,29 +143,32 @@ class Spotify_API:
             json_result = loaded_content["tracks"]
             return json_result
     
-    # # ----------------------------------------------------------------------------
-    # # Retrieve the top artists and songs of the current user
-    # # type is ("artists" or "tracks")
-    # # ----------------------------------------------------------------------------
-    # def get_user_top_items(self, type:str):
-    #     url = f"https://api.spotify.com/v1/me/top/{type}?limit={LIMIT}"
-    #     headers = self.auth_header
-    #     result = get(url, headers=headers)
-    #     print(result)
-    #     loaded_content = json.loads(result.content)
+    # ----------------------------------------------------------------------------
+    # Retrieve the top artists and songs of the current user
+    # type is ("artists" or "tracks")
+    # ----------------------------------------------------------------------------
+    def get_user_top_items(self):
+        type = "artist"
+        url = f"https://api.spotify.com/v1/me/top/{type}"
+        headers = self.auth_header
+        result = get(url, headers=headers)
+        print(result)
+        loaded_content = json.loads(result.content)
         
-    #     # if "error" in loaded_content and loaded_content["error"]["status"] == 401:
-    #     #     self.authorize()
-    #     #     return self.get_user_top_items(type)
-    #     # else:
-    #     print(loaded_content)
-    #     json_result = loaded_content["items"]
-    #     return json_result
+        # if "error" in loaded_content and loaded_content["error"]["status"] == 401:
+        #     self.authorize()
+        #     return self.get_user_top_items(type)
+        # else:
+        print(loaded_content)
+        json_result = loaded_content["items"]
+        print(json_result)
+        return json_result
         
         
-
-# spot = Spotify_API()
-# spot.authorize()
+def test(request):
+    spot = Spotify_API()
+    spot.authorize()
+    spot.get_user_top_items()
 
 # # artist_id = spot.search_for("artist", "IU", 1)[0]["id"]
 # # print(artist_id)
