@@ -1,16 +1,24 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.urls import reverse
+from django.http import HttpResponseRedirect
 from spotify_social.database import *
-from django.http import HttpResponse
 from spotify_social.spotify_api import *
 import bcrypt
+import urllib.parse
+import secrets
 
 # how many results the API should produce for the respective category
 SEARCH_LIMIT_ARTIST = 6
 SEARCH_LIMIT_TRACK = 6
 SEARCH_LIMIT_ALBUM = 6
 
+CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
+REDIRECT_URI = 'http://127.0.0.1:8000/home'
+
+#TODO: UNCOMMENT THIS WHEN PUSHING TO CLOUD
+#REDIRECT_URI = "https://spotify-social-media.uk.r.appspot.com/home/"
 
 # ----------------------------------------------------------------------------
 # Check whether the username and password matches with a user to sign then in
@@ -180,6 +188,10 @@ def update_profile(request):
 # Logs the user out if they are signed in
 # ----------------------------------------------------------------------------
 def logout(request):
+    if "code" in request.session:
+        del request.session["code"]
+    if "state" in request.session:
+        del request.session["state"]
     if "user_id" in request.session:
         del request.session["user_id"]
         messages.success(request, "You have logged out")
@@ -211,7 +223,42 @@ def delete_profile(request):
 
     return redirect(reverse("login_page"))
 
+# ----------------------------------------------------------------------------
+# get authorization from user to use account information
+# ----------------------------------------------------------------------------
+def authorize(request):
+    state = secrets.token_urlsafe(16)
+    scope = 'user-top-read user-read-recently-played'# Read access to a user's top artists and tracks and recently played tracks
+    
+    query_parameters = {
+        'response_type': 'code',
+        'client_id': CLIENT_ID,
+        'scope': scope,
+        'redirect_uri': REDIRECT_URI,
+        'state': state
+    }
+    query_string = urllib.parse.urlencode(query_parameters)
+    spotify_auth_url = f'https://accounts.spotify.com/authorize?{query_string}'
+    return HttpResponseRedirect(spotify_auth_url)
 
+
+# ----------------------------------------------------------------------------
+# store spotify callback code and state
+# ----------------------------------------------------------------------------
+def get_callback(request):
+    if 'state' in request.GET and 'code' in request.GET:
+        code = request.GET.get('code')
+        state = request.GET.get('state')
+        
+        request.session["code"] = code #authorization code
+        request.session["state"] = state
+    
+    print(request.session["code"])
+    print(request.session["state"])
+    
+    return redirect(reverse("user_home_page"))
+    
+    
 # ----------------------------------------------------------------------------
 # Fills the database if the ID's of artists, tracks, albums do not exist
 # ----------------------------------------------------------------------------
@@ -356,21 +403,25 @@ def search(request):
     if request.method == "POST":
         searched_phrase = request.POST.get("searched-phrase")
 
-        if searched_phrase != "":
-            api = Spotify_API()
-            artist_matches = api.search_for(
-                "artist", searched_phrase, SEARCH_LIMIT_ARTIST
-            )
-            track_matches = api.search_for("track", searched_phrase, SEARCH_LIMIT_TRACK)
-            album_matches = api.search_for("album", searched_phrase, SEARCH_LIMIT_ALBUM)
+        if "code" in request.session:
+            if searched_phrase != "":
+                api = Spotify_API(request.session["code"])
+                api.get_token()
+                
+                artist_matches = api.search_for(
+                    "artist", searched_phrase, SEARCH_LIMIT_ARTIST
+                )
+                track_matches = api.search_for("track", searched_phrase, SEARCH_LIMIT_TRACK)
+                album_matches = api.search_for("album", searched_phrase, SEARCH_LIMIT_ALBUM)
 
-            matches = [artist_matches, track_matches, album_matches]
-            fill_database(matches)
-            display_info = get_search_display_info(matches)
+                matches = [artist_matches, track_matches, album_matches]
+                fill_database(matches)
+                display_info = get_search_display_info(matches)
 
-            request.session["search_results"] = display_info
+                request.session["search_results"] = display_info
 
-            return redirect(reverse("search_page"))
-        else:
+                print(api.get_user_top_items())
+                return redirect(reverse("search_page"))
+
             # TODO: search on other pages will also redirect to user home page
-            return redirect(reverse("user_home_page"))
+        return redirect(reverse("user_home_page"))

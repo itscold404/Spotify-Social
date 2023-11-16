@@ -2,7 +2,7 @@
 <a type="button" class="btn btn-primary" href="{% url 'user_edit_profile_page' %}">edit profile</a>
 <a type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirm">Delete Account</a>
 <a type="button" class="btn btn-primary" href="{% url 'authorize' %}">authorize</a>
-<a type="button" class="btn btn-primary" href="{% url 'test' %}">test</a>
+{% comment %} <a type="button" class="btn btn-primary" href="{% url 'test' %}">test</a> {% endcomment %}
 
 {% if messages %} {% for message in messages %}
 <div class="alert alert-{{ message.tags }}">

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from spotify_social.database import *
+from spotify_social.actions import get_callback
 
 
 # Shows the user the landing page. This should be the first page they see
@@ -40,6 +41,8 @@ def signup_page(request):
 
 def user_home_page(request):
     # TODO: populate user home page by passing variables into HTML below
+    
+    get_callback(request)
     return render(request, "signed-in/home_page.html", {})
 
 

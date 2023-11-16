@@ -16,6 +16,6 @@ urlpatterns = [
     path('logout/', actions.logout, name = "logout"),
     path('delete_profile/', actions.delete_profile, name ="delete_user_profile"),
     path('search/', actions.search, name ="search"),
-    path('authorize/', spotify_api.index, name ="authorize"),
-    path('test/', spotify_api.callback, name ="test"),
+    path('authorize/', actions.authorize, name ="authorize"),
+    # path('test/', spotify_api.callback, name ="test"),
 ]
