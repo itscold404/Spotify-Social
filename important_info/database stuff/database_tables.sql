@@ -18,12 +18,15 @@ CREATE TABLE `song` (
 
 CREATE TABLE `user_profile` (
   `user_name` varchar(255) NOT NULL,
-  `full_name` varchar(255) NOT NULL,
+  `first_name` varchar(255) NOT NULL,
+  `last_name` varchar(255) NOT NULL,
+  `full_name` varchar(255),
   `number_of_posts` int(11) DEFAULT 0,
   `school` varchar(255) DEFAULT NULL,
   `area_of_study` varchar(255) DEFAULT NULL,
   `computing_id` varchar(255) DEFAULT NULL,
   `bio` varchar(200) DEFAULT NULL,
+  `profile_pic` varchar(200),
    Primary key (user_name)
 );
 
@@ -37,6 +40,7 @@ CREATE TABLE `album` (
    Primary key (album_id)
 );
 
+-- remove
 CREATE TABLE `album_by` (
   `album_id` varchar(255) NOT NULL,
   `artist_id` varchar(255) NOT NULL,
@@ -45,6 +49,7 @@ CREATE TABLE `album_by` (
    CONSTRAINT `fk_album_by_artist` Foreign key (artist_id) references artist (artist_id)
 );
 
+-- remove 
 CREATE TABLE `album_genre` (
   `album_id` varchar(255) NOT NULL,
   `genre` varchar(20) NOT NULL,
@@ -52,6 +57,7 @@ CREATE TABLE `album_genre` (
    CONSTRAINT `fk_album_genre_album` Foreign key (album_id) references album (album_id)
 );
 
+-- remove 
 CREATE TABLE `artist_genre` (
   `artist_id` varchar(255) NOT NULL,
   `genre` varchar(20) NOT NULL,
@@ -91,6 +97,7 @@ CREATE TABLE `school_song_chart` (
    CONSTRAINT `fk_school_song_chart_song` Foreign key (song_id) references song (song_id)
 );
 
+-- remove 
 CREATE TABLE `song_by` (
   `song_id` varchar(255) NOT NULL,
   `artist_id` varchar(255) NOT NULL,
