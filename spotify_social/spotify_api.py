@@ -6,12 +6,8 @@ import json
 
 load_dotenv()
 
-client_id = os.getenv("SPOTIFY_CLIENT_ID")
-client_secret = os.getenv("SPOTIFY_CLIENT_SECRET")
-
-# number of songs or artist to retrieve from
-LIMIT = 5
-
+CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 REDIRECT_URI = 'http://127.0.0.1:8000/home'
 
 #TODO: UNCOMMENT THIS WHEN PUSHING TO CLOUD
@@ -26,7 +22,7 @@ class Spotify_API:
     # create a new token
     # ----------------------------------------------------------------------------
     def get_token(self):
-        auth_string = client_id + ":" + client_secret
+        auth_string = CLIENT_ID + ":" + CLIENT_SECRET
         auth_bytes = auth_string.encode("utf-8")
         auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
         
@@ -67,7 +63,6 @@ class Spotify_API:
         loaded_content = json.loads(result.content)
             
         if "error" in loaded_content and loaded_content["error"]["status"] == 401:
-            print("error found")
             self.get_token()
             return self.search_for(item_type, name, limit)
         else:
@@ -99,9 +94,8 @@ class Spotify_API:
     # Retrieve the top artists and songs of the current user
     # type is ("artists" or "tracks")
     # ----------------------------------------------------------------------------
-    def get_user_top_items(self):
-        type = "artists"
-        url = f"https://api.spotify.com/v1/me/top/{type}"
+    def get_user_top_items(self, type:str, limit:int):
+        url = f"https://api.spotify.com/v1/me/top/{type}?limit={limit}"
         headers = self.auth_header
         result = get(url, headers=headers)
         loaded_content = json.loads(result.content)
@@ -110,18 +104,5 @@ class Spotify_API:
             self.get_token()
             return self.get_user_top_items(type)
         else:
-            # print(loaded_content)
             json_result = loaded_content["items"]
-            # print(json_result)
             return json_result
-        
-        
-
-# # artist_id = spot.search_for("artist", "IU", 1)[0]["id"]
-# # print(artist_id)
-# # #print(artist_id)
-# # songs = spot.get_songs_by_artist("3HqSLMAZ3g3d5poNaI7GOU")
-
-# # for idx, song in enumerate(songs):
-# #     print(str(idx) + ". " + song["name"])
-# spot.get_user_top_items("artists")

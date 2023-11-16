@@ -13,6 +13,10 @@ SEARCH_LIMIT_ARTIST = 6
 SEARCH_LIMIT_TRACK = 6
 SEARCH_LIMIT_ALBUM = 6
 
+# how many of each category of user's top items should be displayed in his/her profile
+PROFILE_LIMIT_ARTISTS = 5
+PROFILE_LIMIT_TRACKS = 5
+
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 REDIRECT_URI = 'http://127.0.0.1:8000/home'
@@ -253,9 +257,6 @@ def get_callback(request):
         request.session["code"] = code #authorization code
         request.session["state"] = state
     
-    print(request.session["code"])
-    print(request.session["state"])
-    
     return redirect(reverse("user_home_page"))
     
     
@@ -332,7 +333,7 @@ def fill_database(search_result: list):
 # ----------------------------------------------------------------------------
 # Creates a list to store display info on search page of artist, album, track
 # ----------------------------------------------------------------------------
-def get_search_display_info(matches:list):
+def get_display_info(matches:list):
     # matches index: 0 = artists, 1 = tracks, 2 = albums
     display_info = []
     if len(matches) >= 2:
@@ -367,7 +368,6 @@ def get_search_display_info(matches:list):
             info.append(track_artist)
 
             track_result.append(info)
-            print(info)
             
         display_info.append(artist_result)
         display_info.append(track_result)
@@ -420,7 +420,7 @@ def search(request):
 
                 matches = [artist_matches, track_matches, album_matches]
                 fill_database(matches)
-                display_info = get_search_display_info(matches)
+                display_info = get_display_info(matches)
 
                 request.session["search_results"] = display_info
 
@@ -437,16 +437,11 @@ def load_profile(request):
     if "code" in request.session:
         api = Spotify_API(request.session["code"])
         api.get_token()
-        result = api.get_user_top_items()["items"]
-        print("user", result)
+        artists = api.get_user_top_items("artists", PROFILE_LIMIT_ARTISTS)
+        tracks = api.get_user_top_items("tracks", PROFILE_LIMIT_TRACKS)
+        
+        request.session["top_items_user_profile"] = get_display_info([artists, tracks])
 
-        # matches = [artist_matches, track_matches, album_matches]
-        # fill_database(matches)
-        # display_info = get_search_display_info(matches)
-
-        # request.session["search_results"] = display_info
-
-        # print(api.get_user_top_items())
         return redirect(reverse("search_page"))
 
     # TODO: search on other pages will also redirect to user home page
