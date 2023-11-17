@@ -5,6 +5,8 @@ CREATE TABLE `artist` (
   `artist_name` varchar(255) DEFAULT NULL,
   `popularity` int(11) DEFAULT 0,
   `follower_count` int(11) DEFAULT 0,
+   CHECK (follower_count>=0),
+   CHECK (popularity>=0),
    Primary key (artist_id)
 );
 
@@ -13,6 +15,8 @@ CREATE TABLE `song` (
   `duration_ms` int(11) DEFAULT 0,
   `song_name` varchar(255) NOT NULL,
   `popularity` int(11) DEFAULT 0,
+   CHECK (duration_ms>=0),
+   CHECK (popularity>=0),
    Primary key (song_id)
 );
 
@@ -37,6 +41,7 @@ CREATE TABLE `album` (
   `album_type` varchar(20) DEFAULT NULL,
   `total_tracks` int(11) NOT NULL DEFAULT 0,
   `release_date` varchar(20) DEFAULT NULL,
+   CHECK (popularity>=0),
    Primary key (album_id)
 );
 
