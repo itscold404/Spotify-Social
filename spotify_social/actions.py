@@ -19,13 +19,14 @@ PROFILE_LIMIT_TRACKS = 5
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
-REDIRECT_URI = 'http://127.0.0.1:8000/home'
+REDIRECT_URI = "http://127.0.0.1:8000/home"
 
-#TODO: UNCOMMENT THIS WHEN PUSHING TO CLOUD
-#REDIRECT_URI = "https://spotify-social-media.uk.r.appspot.com/home/"
+# TODO: UNCOMMENT THIS WHEN PUSHING TO CLOUD
+# REDIRECT_URI = "https://spotify-social-media.uk.r.appspot.com/home/"
+
 
 # ----------------------------------------------------------------------------
-# Check whether the username and password matches with a user to sign then in
+# Check whether the username and password matches with a user to sign them in
 # ----------------------------------------------------------------------------
 def check_credentials(request):
     if request.method == "POST":
@@ -57,31 +58,19 @@ def check_credentials(request):
 
         # A matching username found, now check if password matches
         # TODO: delete except section after database wipe with real data
-        try:
-            if (num_matches == 1) and bcrypt.checkpw(
-                inputted_password.encode("utf-8"), hashed_password.encode("utf-8")
-            ):
-                request.session["user_id"] = inputted_user_name
+        # try:
+        if (num_matches == 1) and bcrypt.checkpw(
+            inputted_password.encode("utf-8"), hashed_password.encode("utf-8")
+        ):
+            request.session["user_id"] = inputted_user_name
 
-                # TODO: create/populate user home page
-                # redirect used to ensure user is using a proper url to avoid errors
-                request.session["user_id"] = inputted_user_name
-                return redirect(reverse("user_home_page"))
-            else:
-                messages.error(request, "Invalid Username Password Combination")
-                return redirect(reverse("login_page"))
-
-        except:
-            if (num_matches == 1) and (inputted_password == hashed_password):
-                request.session["user_id"] = inputted_user_name
-
-                # TODO: create/populate user home page
-                # redirect used to ensure user is using a proper url to avoid errors
-                request.session["user_id"] = inputted_user_name
-                return redirect(reverse("user_home_page"))
-            else:
-                messages.error(request, "Invalid Username Password Combination")
-                return redirect(reverse("login_page"))
+            # TODO: create/populate user home page
+            # redirect used to ensure user is using a proper url to avoid errors
+            request.session["user_id"] = inputted_user_name
+            return redirect(reverse("authorize_page"))
+        else:
+            messages.error(request, "Invalid Username Password Combination")
+            return redirect(reverse("login_page"))
 
 
 # ----------------------------------------------------------------------------
@@ -192,13 +181,8 @@ def update_profile(request):
 # Logs the user out if they are signed in
 # ----------------------------------------------------------------------------
 def logout(request):
-    if "code" in request.session:
-        del request.session["code"]
-    if "state" in request.session:
-        del request.session["state"]
-    if "user_id" in request.session:
-        del request.session["user_id"]
-        messages.success(request, "You have logged out")
+    request.session.flush()
+    messages.success(request, "You have logged out")
 
     return redirect(reverse("login_page"))
 
@@ -227,39 +211,72 @@ def delete_profile(request):
 
     return redirect(reverse("login_page"))
 
+
 # ----------------------------------------------------------------------------
 # get authorization from user to use account information
 # ----------------------------------------------------------------------------
 def authorize(request):
     state = secrets.token_urlsafe(16)
-    scope = 'user-top-read user-read-recently-played'# Read access to a user's top artists and tracks and recently played tracks
-    
+    scope = "user-top-read user-read-recently-played"  # Read access to a user's top artists and tracks and recently played tracks
+
     query_parameters = {
-        'response_type': 'code',
-        'client_id': CLIENT_ID,
-        'scope': scope,
-        'redirect_uri': REDIRECT_URI,
-        'state': state
+        "response_type": "code",
+        "client_id": CLIENT_ID,
+        "scope": scope,
+        "redirect_uri": REDIRECT_URI,
+        "state": state,
     }
     query_string = urllib.parse.urlencode(query_parameters)
-    spotify_auth_url = f'https://accounts.spotify.com/authorize?{query_string}'
+    spotify_auth_url = f"https://accounts.spotify.com/authorize?{query_string}"
+
+    messages.success(request, "spotify login successful!")
     return HttpResponseRedirect(spotify_auth_url)
+
+
+# ----------------------------------------------------------------------------
+# retrieves access token that is valid for an hour
+# ----------------------------------------------------------------------------
+def get_token(auth_code):
+    auth_string = CLIENT_ID + ":" + CLIENT_SECRET
+    auth_bytes = auth_string.encode("utf-8")
+    auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
+
+    url = "https://accounts.spotify.com/api/token"
+    headers = {
+        "Authorization": "Basic " + auth_base64,
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
+
+    data = {
+        "code": auth_code,
+        "redirect_uri": REDIRECT_URI,
+        "grant_type": "authorization_code",
+    }
+    result = post(url, headers=headers, data=data)
+    json_result = json.loads(result.content)
+    token = json_result["access_token"]
+
+    auth_header = {"Authorization": "Bearer " + token}
+    return auth_header
 
 
 # ----------------------------------------------------------------------------
 # store spotify callback code and state
 # ----------------------------------------------------------------------------
 def get_callback(request):
-    if 'state' in request.GET and 'code' in request.GET:
-        code = request.GET.get('code')
-        state = request.GET.get('state')
-        
-        request.session["code"] = code #authorization code
+    if "state" in request.GET and "code" in request.GET:
+        code = request.GET.get("code")
+        state = request.GET.get("state")
+
+        request.session["code"] = code  # authorization code
         request.session["state"] = state
-    
+
+    if "auth_header" not in request.session:
+        request.session["auth_header"] = get_token(request.session["code"])
+
     return redirect(reverse("user_home_page"))
-    
-    
+
+
 # ----------------------------------------------------------------------------
 # Fills the database if the ID's of artists, tracks, albums do not exist
 # ----------------------------------------------------------------------------
@@ -333,7 +350,7 @@ def fill_database(search_result: list):
 # ----------------------------------------------------------------------------
 # Creates a list to store display info on search page of artist, album, track
 # ----------------------------------------------------------------------------
-def get_display_info(matches:list):
+def get_display_info(matches: list):
     # matches index: 0 = artists, 1 = tracks, 2 = albums
     display_info = []
     if len(matches) >= 2:
@@ -368,10 +385,10 @@ def get_display_info(matches:list):
             info.append(track_artist)
 
             track_result.append(info)
-            
+
         display_info.append(artist_result)
         display_info.append(track_result)
-        
+
     if len(matches) >= 3:
         album_result = []
         for i in range(len(matches[2])):
@@ -399,6 +416,7 @@ def get_display_info(matches:list):
 
     return display_info
 
+
 # ----------------------------------------------------------------------------
 # sends request to spotify api to get artists, tracks, ablumbs that matches
 # what the user is searching for
@@ -407,16 +425,20 @@ def search(request):
     if request.method == "POST":
         searched_phrase = request.POST.get("searched-phrase")
 
-        if "code" in request.session:
+        if "code" in request.session and "auth_header" in request.session:
+            token = request.session["auth_header"]
             if searched_phrase != "":
-                api = Spotify_API(request.session["code"])
-                api.get_token()
-                
+                api = Spotify_API()
+
                 artist_matches = api.search_for(
-                    "artist", searched_phrase, SEARCH_LIMIT_ARTIST
+                    token, "artist", searched_phrase, SEARCH_LIMIT_ARTIST
                 )
-                track_matches = api.search_for("track", searched_phrase, SEARCH_LIMIT_TRACK)
-                album_matches = api.search_for("album", searched_phrase, SEARCH_LIMIT_ALBUM)
+                track_matches = api.search_for(
+                    token, "track", searched_phrase, SEARCH_LIMIT_TRACK
+                )
+                album_matches = api.search_for(
+                    token, "album", searched_phrase, SEARCH_LIMIT_ALBUM
+                )
 
                 matches = [artist_matches, track_matches, album_matches]
                 fill_database(matches)
@@ -428,18 +450,19 @@ def search(request):
 
             # TODO: search on other pages will also redirect to user home page
         return redirect(reverse("user_home_page"))
-    
+
+
 # ----------------------------------------------------------------------------
-# retrieve information (user top tracks and artists) from spotify api 
+# retrieve information (user top tracks and artists) from spotify api
 # to load in user profile
 # ----------------------------------------------------------------------------
 def load_profile(request):
-    if "code" in request.session:
-        api = Spotify_API(request.session["code"])
-        api.get_token()
-        artists = api.get_user_top_items("artists", PROFILE_LIMIT_ARTISTS)
-        tracks = api.get_user_top_items("tracks", PROFILE_LIMIT_TRACKS)
-        
+    if "code" in request.session and "auth_header" in request.session:
+        api = Spotify_API()
+        token = request.session["auth_header"]
+        artists = api.get_user_top_items(token, "artists", PROFILE_LIMIT_ARTISTS)
+        tracks = api.get_user_top_items(token, "tracks", PROFILE_LIMIT_TRACKS)
+
         request.session["top_items_user_profile"] = get_display_info([artists, tracks])
 
         return redirect(reverse("search_page"))
