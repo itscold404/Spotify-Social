@@ -5,12 +5,14 @@ from django.http import HttpResponseRedirect
 from spotify_social.database import *
 from spotify_social.spotify_api import *
 from requests import post
+from dotenv import load_dotenv
 import bcrypt
 import urllib.parse
 import secrets
 import os
 import base64
 
+load_dotenv()
 
 # how many results the API should produce for the respective category
 SEARCH_LIMIT_ARTIST = 6
