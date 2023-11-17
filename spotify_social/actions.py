@@ -128,7 +128,7 @@ def create_account(request):
                 # he/she will have access to
                 request.session["user_id"] = inputted_user_name
 
-                return redirect(reverse("user_home_page"))
+                return redirect(reverse("authorize_page"))
 
             else:
                 db.close()
