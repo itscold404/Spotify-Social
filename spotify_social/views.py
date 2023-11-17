@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from spotify_social.database import *
+from spotify_social.actions import get_callback, load_profile
 
 
 # Shows the user the landing page. This should be the first page they see
@@ -38,8 +39,14 @@ def signup_page(request):
     return render(request, "signed-out/signup_page.html", {})
 
 
+def authorize_spotify(request):
+    return render(request, "signed-in/authorize.html", {})
+
+
 def user_home_page(request):
     # TODO: populate user home page by passing variables into HTML below
+
+    get_callback(request)
     return render(request, "signed-in/home_page.html", {})
 
 
@@ -56,7 +63,26 @@ def user_profile_page(request):
         True,
     )
 
-    return render(request, "signed-in/profile_page.html", {"results": result[1]})
+    top_artists = []
+    top_tracks = []
+
+    # TODO: THIS IS CAUSING ERROR. NEED TO COMMENT THIS, AUTORIZE USER, THEN UNCOMMENT TO GET
+    # PASS THIS ISSUE CURRENTLY
+    if "code" in request.session:
+        print("already have access token")
+        print(request.session["code"])
+
+    load_profile(request)
+
+    if "top_items_user_profile" in request.session:
+        top_artists = request.session["top_items_user_profile"][0]
+        top_tracks = request.session["top_items_user_profile"][1]
+
+    return render(
+        request,
+        "signed-in/profile_page.html",
+        {"results": result[1], "top_artists": top_artists, "top_tracks": top_tracks},
+    )
 
 
 def user_edit_profile_page(request):
@@ -69,6 +95,8 @@ def search_page(request):
         tracks = request.session["search_results"][1]
         albums = request.session["search_results"][2]
 
-        print(len(tracks))
-
-    return render(request, "signed-in/search_page.html", {"artists": artists, "tracks": tracks, "albums": albums})
+    return render(
+        request,
+        "signed-in/search_page.html",
+        {"artists": artists, "tracks": tracks, "albums": albums},
+    )
