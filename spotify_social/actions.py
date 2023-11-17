@@ -4,9 +4,13 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from spotify_social.database import *
 from spotify_social.spotify_api import *
+from requests import post
 import bcrypt
 import urllib.parse
 import secrets
+import os
+import base64
+
 
 # how many results the API should produce for the respective category
 SEARCH_LIMIT_ARTIST = 6
@@ -428,15 +432,13 @@ def search(request):
         if "code" in request.session and "auth_header" in request.session:
             token = request.session["auth_header"]
             if searched_phrase != "":
-                api = Spotify_API()
-
-                artist_matches = api.search_for(
+                artist_matches = search_for(
                     token, "artist", searched_phrase, SEARCH_LIMIT_ARTIST
                 )
-                track_matches = api.search_for(
+                track_matches = search_for(
                     token, "track", searched_phrase, SEARCH_LIMIT_TRACK
                 )
-                album_matches = api.search_for(
+                album_matches = search_for(
                     token, "album", searched_phrase, SEARCH_LIMIT_ALBUM
                 )
 
@@ -458,10 +460,9 @@ def search(request):
 # ----------------------------------------------------------------------------
 def load_profile(request):
     if "code" in request.session and "auth_header" in request.session:
-        api = Spotify_API()
         token = request.session["auth_header"]
-        artists = api.get_user_top_items(token, "artists", PROFILE_LIMIT_ARTISTS)
-        tracks = api.get_user_top_items(token, "tracks", PROFILE_LIMIT_TRACKS)
+        artists = get_user_top_items(token, "artists", PROFILE_LIMIT_ARTISTS)
+        tracks = get_user_top_items(token, "tracks", PROFILE_LIMIT_TRACKS)
 
         request.session["top_items_user_profile"] = get_display_info([artists, tracks])
 
