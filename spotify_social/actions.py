@@ -85,7 +85,8 @@ def check_credentials(request):
 def create_account(request):
     if request.method == "POST":
         inputted_user_name = request.POST.get("user_name")
-        inputted_name = request.POST.get("name")
+        inputted_fname = request.POST.get("fname")
+        inputted_lname = request.POST.get("lname")
         inputted_password = request.POST.get("password")
         inputted_re_password = request.POST.get("re_password")
 
@@ -112,10 +113,10 @@ def create_account(request):
 
                 db.execute(
                     """
-                    INSERT INTO user_profile (user_name, full_name)
+                    INSERT INTO user_profile (user_name, first_name, last_name)
                     VALUES (%s, %s);
                     """,
-                    (inputted_user_name, inputted_name),
+                    (inputted_user_name, inputted_fname, inputted_lname),
                     False,
                 )
 
@@ -142,13 +143,21 @@ def create_account(request):
                 messages.error(request, "Passwords Do Not Match")
 
                 # Store user input data to be used when sign up page is called again
-                request.session["user_inputs"] = [inputted_user_name, inputted_name]
+                request.session["user_inputs"] = [
+                    inputted_user_name,
+                    inputted_fname,
+                    inputted_lname,
+                ]
                 return redirect(reverse("signup_page"))
         else:
             db.close()
 
             messages.error(request, "Username Already Exists")
-            request.session["user_inputs"] = [inputted_user_name, inputted_name]
+            request.session["user_inputs"] = [
+                inputted_user_name,
+                inputted_fname,
+                inputted_lname,
+            ]
             return redirect(reverse("signup_page"))
 
 
