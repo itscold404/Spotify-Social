@@ -28,12 +28,17 @@ def signup_page(request):
     if "user_inputs" in request.session:
         user_data = request.session.pop("user_inputs", {})
         inputted_user_name = user_data[0]
-        inputted_name = user_data[1]
+        inputted_fname = user_data[1]
+        inputted_lname = user_data[2]
 
         return render(
             request,
             "signed-out/signup_page.html",
-            {"username": inputted_user_name, "full_name": inputted_name},
+            {
+                "username": inputted_user_name,
+                "first_name": inputted_fname,
+                "last_name": inputted_lname,
+            },
         )
 
     return render(request, "signed-out/signup_page.html", {})
@@ -68,9 +73,6 @@ def user_profile_page(request):
 
     # TODO: THIS IS CAUSING ERROR. NEED TO COMMENT THIS, AUTORIZE USER, THEN UNCOMMENT TO GET
     # PASS THIS ISSUE CURRENTLY
-    if "code" in request.session:
-        print("already have access token")
-        print(request.session["code"])
 
     load_profile(request)
 

@@ -114,7 +114,7 @@ def create_account(request):
                 db.execute(
                     """
                     INSERT INTO user_profile (user_name, first_name, last_name)
-                    VALUES (%s, %s);
+                    VALUES (%s, %s, %s);
                     """,
                     (inputted_user_name, inputted_fname, inputted_lname),
                     False,
@@ -167,7 +167,6 @@ def create_account(request):
 def update_profile(request):
     if request.method == "POST":
         user = request.session["user_id"]
-        name = request.POST.get("name")
         bio = request.POST.get("bio")
         comp_id = request.POST.get("comp_id")
         school = request.POST.get("school")
@@ -179,10 +178,10 @@ def update_profile(request):
         db.execute(
             """
             UPDATE user_profile
-            SET full_name=%s, bio=%s, computing_id=%s, school = %s, area_of_study=%s
+            SET bio=%s, computing_id=%s, school = %s, area_of_study=%s
             WHERE user_name = %s;
             """,
-            (name, bio, comp_id, school, area_study, user),
+            (bio, comp_id, school, area_study, user),
             False,
         )
 
@@ -453,6 +452,14 @@ def search(request):
                     token, "album", searched_phrase, SEARCH_LIMIT_ALBUM
                 )
 
+                # spotify authorization expired, reauthorize
+                if (
+                    artist_matches == "ERROR"
+                    or track_matches == "ERROR"
+                    or album_matches == "ERROR"
+                ):
+                    return authorize(request)
+
                 matches = [artist_matches, track_matches, album_matches]
                 fill_database(matches)
                 display_info = get_display_info(matches)
@@ -474,6 +481,10 @@ def load_profile(request):
         token = request.session["auth_header"]
         artists = get_user_top_items(token, "artists", PROFILE_LIMIT_ARTISTS)
         tracks = get_user_top_items(token, "tracks", PROFILE_LIMIT_TRACKS)
+
+        # spotify authorization expired, reauthorize
+        if artists == "ERROR" or tracks == "ERROR":
+            return authorize(request)
 
         request.session["top_items_user_profile"] = get_display_info([artists, tracks])
 
