@@ -102,3 +102,13 @@ def search_page(request):
         "signed-in/search_page.html",
         {"artists": artists, "tracks": tracks, "albums": albums},
     )
+
+
+def search_profile_page(request):
+    profiles = request.session.pop("searched_profiles", {})
+    print("profiles in search", profiles)
+    return render(
+        request,
+        "signed-in/search_profile.html",
+        {"profiles": profiles},
+    )

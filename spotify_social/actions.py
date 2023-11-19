@@ -492,3 +492,29 @@ def load_profile(request):
 
     # TODO: search on other pages will also redirect to user home page
     return redirect(reverse("user_home_page"))
+
+
+# ----------------------------------------------------------------------------
+# retrieve user profiles that have similar names to input
+# ----------------------------------------------------------------------------
+def search_profile(request):
+    sUser_name = request.POST.get("searched-profile")
+    pattern = f"{sUser_name}%"
+
+    db = Database()
+    result = db.execute(
+        """
+        SELECT * 
+        FROM user_profile
+        WHERE user_name LIKE %s;
+        """,
+        (pattern,),
+        True,
+    )
+    db.close()
+
+    matches, profiles = result[0], result[1]
+    num_profiles = min(10, matches)  # number of profiles to display
+    request.session["searched_profiles"] = profiles[0:num_profiles]
+
+    return redirect(reverse("search_profile_page"))
