@@ -99,7 +99,7 @@ def search_page(request):
 
     return render(
         request,
-        "signed-in/search_page.html",
+        "search pages/search_items.html",
         {"artists": artists, "tracks": tracks, "albums": albums},
     )
 
@@ -109,6 +109,6 @@ def search_profile_page(request):
     print("profiles in search", profiles)
     return render(
         request,
-        "signed-in/search_profile.html",
+        "search pages/search_profile.html",
         {"profiles": profiles},
     )
