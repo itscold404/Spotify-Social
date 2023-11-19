@@ -435,7 +435,7 @@ def get_display_info(matches: list):
 # sends request to spotify api to get artists, tracks, ablumbs that matches
 # what the user is searching for
 # ----------------------------------------------------------------------------
-def search(request):
+def search_items(request):
     if request.method == "POST":
         searched_phrase = request.POST.get("searched-phrase")
 

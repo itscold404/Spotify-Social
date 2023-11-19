@@ -16,6 +16,6 @@ urlpatterns = [
     path("update_profile/", actions.update_profile, name="update_user_profile"),
     path("logout/", actions.logout, name="logout"),
     path("delete_profile/", actions.delete_profile, name="delete_user_profile"),
-    path("search/", actions.search, name="search"),
+    path("search/", actions.search_items, name="search_items"),
     path("authorize/", actions.authorize, name="authorize"),
 ]

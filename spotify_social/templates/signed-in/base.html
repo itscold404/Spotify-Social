@@ -14,24 +14,40 @@
             <a class="navbar-brand" href="{% url 'logout' %}">Log Out</a>
             <a class="navbar-brand" href="{% url 'user_profile_page' %}">Profile</a>
 
-            <form id="APISearchForm" action="{%url 'search'%}" method="post">
+            <form id="APISearchForm" action="{%url 'search_items'%}" method="post">
                 {% csrf_token %}
                 <div class="input-group">
                     <div class="form-outline">
                         <input
-                            id="search-focus"
+                            id="search-items"
                             type="search"
-                            id="form1"
                             placeholder="Search Artist, Song, Albumn"
                             class="form-control"
                             name="searched-phrase"
                         />
                     </div>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i>
+                        <i class="Search Spotify"></i>
                     </button>
                 </div>
             </form>
+            {% comment %} {% comment %} <form id="ProfileSearchForm" action="{%url 'search_profile'%}" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <div class="form-outline">
+                        <input
+                            id="search-profile"
+                            type="search"
+                            placeholder="Search Profile"
+                            class="form-control"
+                            name="searched-profile"
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="Search Profile"></i>
+                    </button>
+                </div>
+            </form> {% endcomment %} {% endcomment %}
         </nav>
     </head>
     <br />
