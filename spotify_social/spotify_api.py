@@ -20,6 +20,7 @@ def search_for(auth_header: dict, item_type: str, name: str, limit: int):
 
     if "error" in loaded_content:
         print("ERROR:", result)
+        return "ERROR"
     else:
         json_result = loaded_content[f"{item_type}s"]["items"]
 
@@ -41,6 +42,7 @@ def get_songs_by_artist(auth_header: dict, artist_id: str):
 
     if "error" in loaded_content:
         print("ERROR:", result)
+        return "ERROR"
     else:
         json_result = loaded_content["tracks"]
         return json_result
@@ -58,6 +60,7 @@ def get_user_top_items(auth_header: dict, type: str, limit: int):
 
     if "error" in loaded_content:
         print("ERROR:", result)
+        return "ERROR"
     else:
         json_result = loaded_content["items"]
         return json_result

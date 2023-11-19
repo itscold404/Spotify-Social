@@ -1,23 +1,23 @@
 -- spotifySocial is the name of the database on google cloud
 USE spotifySocial;
 
-DROP TABLE school_song_chart;
+-- DROP TABLE school_song_chart;
 
-CREATE TABLE `school_song_chart` (
-  `school_name` varchar(255) NOT NULL,
-  `ranking` int(11) NOT NULL,
-  `song_id` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- CREATE TABLE `school_song_chart` (
+--   `school_name` varchar(255) NOT NULL,
+--   `ranking` int(11) NOT NULL,
+--   `song_id` varchar(255) NOT NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-ALTER TABLE `school_song_chart`
-  ADD PRIMARY KEY (`school_name`, `ranking`),
-  ADD KEY `ranking_key` (`ranking`);
+-- ALTER TABLE `school_song_chart`
+--   ADD PRIMARY KEY (`school_name`, `ranking`),
+--   ADD KEY `ranking_key` (`ranking`);
 
-ALTER TABLE `school_song_chart`
-  ADD CONSTRAINT `school_song_chart_ibfk_1` FOREIGN KEY (`song_id`) REFERENCES `song` (`song_id`);
+-- ALTER TABLE `school_song_chart`
+--   ADD CONSTRAINT `school_song_chart_ibfk_1` FOREIGN KEY (`song_id`) REFERENCES `song` (`song_id`);
 
-NOTE: USER_PROFILE IS MISSING NAME. INSERT NAME COLUMN INTO DATABASE
-spotifySocial is the name of the database on google cloud
+-- NOTE: USER_PROFILE IS MISSING NAME. INSERT NAME COLUMN INTO DATABASE
+-- spotifySocial is the name of the database on google cloud
 
 INSERT INTO album (album_id, title, popularity, album_type, total_tracks, release_date)
 VALUES

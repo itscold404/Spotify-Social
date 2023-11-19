@@ -3,16 +3,12 @@
 CREATE TABLE `artist` (
   `artist_id` varchar(255) NOT NULL,
   `artist_name` varchar(255) DEFAULT NULL,
-  `popularity` int(11) DEFAULT 0,
-  `follower_count` int(11) DEFAULT 0,
    Primary key (artist_id)
 );
 
 CREATE TABLE `song` (
   `song_id` varchar(255) NOT NULL,
-  `duration_ms` int(11) DEFAULT 0,
   `song_name` varchar(255) NOT NULL,
-  `popularity` int(11) DEFAULT 0,
    Primary key (song_id)
 );
 
@@ -26,17 +22,13 @@ CREATE TABLE `user_profile` (
   `area_of_study` varchar(255) DEFAULT NULL,
   `computing_id` varchar(255) DEFAULT NULL,
   `bio` varchar(200) DEFAULT NULL,
-  `profile_pic` varchar(200),
+   CONSTRAINT checkPost CHECK (number_of_posts>=0),
    Primary key (user_name)
 );
 
 CREATE TABLE `album` (
   `album_id` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
-  `popularity` int(11) NOT NULL DEFAULT 0,
-  `album_type` varchar(20) DEFAULT NULL,
-  `total_tracks` int(11) NOT NULL DEFAULT 0,
-  `release_date` varchar(20) DEFAULT NULL,
    Primary key (album_id)
 );
 
@@ -139,3 +131,12 @@ CREATE TABLE `user_login` (
    Primary key (user_name),
    CONSTRAINT `fk_user_login_user_profile` Foreign key (user_name) references user_profile (user_name) ON delete cascade
 );
+
+DELIMITER $$
+CREATE TRIGGER makeFullName
+BEFORE INSERT ON user_profile
+FOR EACH ROW
+  BEGIN
+    SET NEW.full_name = CONCAT(NEW.first_name, ' ', NEW.last_name);
+  END$$
+DELIMITER ;
