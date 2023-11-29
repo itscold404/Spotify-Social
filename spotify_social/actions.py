@@ -28,7 +28,7 @@ CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 REDIRECT_URI = "http://127.0.0.1:8000/home"
 
 # TODO: UNCOMMENT THIS WHEN PUSHING TO CLOUD
-# REDIRECT_URI = "https://spotify-social-media.uk.r.appspot.com/home/"
+REDIRECT_URI = "https://spotify-social-media.uk.r.appspot.com/home/"
 
 
 # ----------------------------------------------------------------------------
@@ -83,6 +83,10 @@ def check_credentials(request):
 # Create a new account for the user
 # ----------------------------------------------------------------------------
 def create_account(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if request.method == "POST":
         inputted_user_name = request.POST.get("user_name")
         inputted_fname = request.POST.get("fname")
@@ -165,6 +169,10 @@ def create_account(request):
 # Update user profile with the info they input
 # ----------------------------------------------------------------------------
 def update_profile(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if request.method == "POST":
         user = request.session["user_id"]
         bio = request.POST.get("bio")
@@ -195,6 +203,10 @@ def update_profile(request):
 # Logs the user out if they are signed in
 # ----------------------------------------------------------------------------
 def logout(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     request.session.flush()
     messages.success(request, "You have logged out")
 
@@ -205,6 +217,10 @@ def logout(request):
 # Deletes the user profile
 # ----------------------------------------------------------------------------
 def delete_profile(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if "user_id" in request.session:
         user_name = request.session["user_id"]
 
@@ -230,6 +246,10 @@ def delete_profile(request):
 # get authorization from user to use account information
 # ----------------------------------------------------------------------------
 def authorize(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     state = secrets.token_urlsafe(16)
     scope = "user-top-read user-read-recently-played"  # Read access to a user's top artists and tracks and recently played tracks
 
@@ -278,6 +298,10 @@ def get_token(auth_code):
 # store spotify callback code and state
 # ----------------------------------------------------------------------------
 def get_callback(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if "state" in request.GET and "code" in request.GET:
         code = request.GET.get("code")
         state = request.GET.get("state")
@@ -436,6 +460,10 @@ def get_display_info(matches: list):
 # what the user is searching for
 # ----------------------------------------------------------------------------
 def search_items(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if request.method == "POST":
         searched_phrase = request.POST.get("searched-phrase")
 
@@ -477,6 +505,10 @@ def search_items(request):
 # to load in user profile
 # ----------------------------------------------------------------------------
 def load_profile(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if "code" in request.session and "auth_header" in request.session:
         token = request.session["auth_header"]
         artists = get_user_top_items(token, "artists", PROFILE_LIMIT_ARTISTS)
@@ -498,9 +530,12 @@ def load_profile(request):
 # retrieve user profiles that have similar names to input
 # ----------------------------------------------------------------------------
 def search_profile(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     sUser_name = request.POST.get("searched-profile")
     pattern = f"{sUser_name}%"
-
     db = Database()
     result = db.execute(
         """
@@ -512,9 +547,7 @@ def search_profile(request):
         True,
     )
     db.close()
-
     matches, profiles = result[0], result[1]
     num_profiles = min(10, matches)  # number of profiles to display
     request.session["searched_profiles"] = profiles[0:num_profiles]
-
     return redirect(reverse("search_profile_page"))
