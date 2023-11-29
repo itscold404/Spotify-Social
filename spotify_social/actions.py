@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from spotify_social.database import *
@@ -27,8 +27,8 @@ CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 REDIRECT_URI = "http://127.0.0.1:8000/home"
 
-# TODO: UNCOMMENT THIS WHEN PUSHING TO CLOUD
-REDIRECT_URI = "https://spotify-social-media.uk.r.appspot.com/home/"
+# # TODO: UNCOMMENT THIS WHEN PUSHING TO CLOUD
+# REDIRECT_URI = "https://spotify-social-media.uk.r.appspot.com/home/"
 
 
 # ----------------------------------------------------------------------------
@@ -83,10 +83,6 @@ def check_credentials(request):
 # Create a new account for the user
 # ----------------------------------------------------------------------------
 def create_account(request):
-    # check if user is signed in before proceeding
-    if "user_id" not in request.session:
-        return redirect(reverse("login_page"))
-
     if request.method == "POST":
         inputted_user_name = request.POST.get("user_name")
         inputted_fname = request.POST.get("fname")

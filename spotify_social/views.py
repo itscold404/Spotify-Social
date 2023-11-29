@@ -1,17 +1,12 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
 from django.urls import reverse
 from spotify_social.database import *
-from spotify_social.actions import get_callback, load_profile, check_signedin
+from spotify_social.actions import get_callback, load_profile
 
 
 # Shows the user the landing page. This should be the first page they see
 # TODO: clean up landing page of user info
 def landing_page(request):
-    # check if user is signed in before proceeding
-    if "user_id" not in request.session:
-        return redirect(reverse("login_page"))
-
     # results_django = run_query("SELECT * FROM user_profile;")
 
     db = Database()
@@ -137,7 +132,7 @@ def search_profile_page(request):
         return redirect(reverse("login_page"))
 
     profiles = request.session.pop("searched_profiles", {})
-    print("profiles in search", profiles)
+
     return render(
         request,
         "search pages/search_profile.html",
