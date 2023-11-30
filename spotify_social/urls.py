@@ -12,6 +12,7 @@ urlpatterns = [
     path("edit_profile/", views.user_edit_profile_page, name="user_edit_profile_page"),
     path("search_page/", views.search_page, name="search_page"),
     path("songs_page/", views.songs_page, name="songs_page"),
+    path("albums_page/",views.albums_page, name="albums_page"),
     path("check_credentials/", actions.check_credentials, name="check_credentials"),
     path("create_account/", actions.create_account, name="create_account"),
     path("update_profile/", actions.update_profile, name="update_user_profile"),
