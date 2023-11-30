@@ -138,3 +138,28 @@ def search_profile_page(request):
         "search pages/search_profile.html",
         {"profiles": profiles},
     )
+
+
+# ----------------------------------------------------------------------------
+# displays the profile that the user wants to view (not his/her own)
+# ----------------------------------------------------------------------------
+def view_profile_page(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
+    top_artists = []
+    top_tracks = []
+    if "selected_user_info" in request.session:
+        user_info, items = request.session["selected_user_info"]
+        top_artists, top_tracks = items[0], items[1]
+
+        print(user_info)
+        print(top_artists)
+        print(top_tracks)
+
+    # return render(
+    #     request,
+    #     "search pages/search_profile.html",
+    #     {},
+    # )

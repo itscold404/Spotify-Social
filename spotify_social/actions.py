@@ -543,6 +543,7 @@ def search_profile(request):
     matches, profiles = result[0], result[1]
     num_profiles = min(10, matches)  # number of profiles to display
     request.session["searched_profiles"] = profiles[0:num_profiles]
+
     return redirect(reverse("search_profile_page"))
 
 
@@ -564,6 +565,7 @@ def fill_top_items(items: list, user_name, type):
             True,
         )
 
+        # if there is nothing for that type and ranking, then add to the table
         if result[0] == 0:
             db.execute(
                 """
@@ -573,12 +575,13 @@ def fill_top_items(items: list, user_name, type):
                 (user_name, items[i][0], type, i + 1),
                 False,
             )
+        # if there is an item for that type and ranking, then update the table
         elif result[0] == 1:
             db.execute(
                 """
                 UPDATE user_top_items
                 SET item_id=%s
-                WHERE user_name = %s and item_ranking = %s, and item_type=%s;
+                WHERE user_name = %s and item_ranking = %s and item_type=%s;
                 """,
                 (items[i][0], user_name, i + 1, type),
                 False,
@@ -589,3 +592,69 @@ def fill_top_items(items: list, user_name, type):
 # ----------------------------------------------------------------------------
 # retrieve information of a different profile to display
 # ----------------------------------------------------------------------------
+def view_user_profile(request):
+    user_name = request.POST.get("user_name")
+    db = Database()
+
+    result = db.execute(
+        """
+        SELECT *
+        FROM user_profile
+        WHERE user_name=%s;
+        """,
+        (user_name,),
+        True,
+    )
+
+    db.close()
+
+    # if the user_name exists in the database
+    if result[0] == 1:
+        artists = db.execute(
+            """
+            SELECT item_id
+            FROM user_top_items
+            WHERE user_name=%s AND item_type="artist"
+            ORDER BY item_ranking ASC;
+            """,
+            (user_name,),
+            True,
+        )
+
+        tracks = db.execute(
+            """
+            SELECT item_id
+            FROM user_top_items
+            WHERE user_name=%s AND item_type="track"
+            ORDER BY item_ranking ASC;
+            """,
+            (user_name,),
+            True,
+        )
+
+        artist_id_list = []
+        track_id_list = []
+        auth_header = request.session["auth_header"]
+
+        for a in artists[1]:
+            artist_id_list.append(a[0])
+
+        for t in tracks[1]:
+            track_id_list.append(t[0])
+
+        artists = []
+        tracks = []
+        for a in artist_id_list:
+            artists.append(find_artist(auth_header, a))
+
+        for t in track_id_list:
+            tracks.append(find_track(auth_header, t))
+
+        request.session["selected_profile_info"] = [
+            result[1],
+            get_display_info([artists, tracks]),
+        ]
+
+        print(result[1], artists, tracks)
+
+    return redirect(reverse("view_profile_page"))

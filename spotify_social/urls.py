@@ -9,6 +9,9 @@ urlpatterns = [
     path("authorize_spotify/", views.authorize_spotify, name="authorize_page"),
     path("home/", views.user_home_page, name="user_home_page"),
     path("profile/", views.user_profile_page, name="user_profile_page"),
+    path(
+        "view_profile/", views.view_profile_page, name="view_profile_page"
+    ),  # view the profile of diff user
     path("edit_profile/", views.user_edit_profile_page, name="user_edit_profile_page"),
     path("search_page/", views.search_page, name="search_page"),  # the spotify items
     path("search_profile_page/", views.search_profile_page, name="search_profile_page"),
@@ -20,4 +23,5 @@ urlpatterns = [
     path("search_items/", actions.search_items, name="search_items"),
     path("authorize/", actions.authorize, name="authorize"),
     path("search_profile/", actions.search_profile, name="search_profile"),
+    path("view_user/", actions.view_user_profile, name="view_user_profile"),
 ]
