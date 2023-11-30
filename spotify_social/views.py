@@ -102,3 +102,6 @@ def search_page(request):
         "signed-in/search_page.html",
         {"artists": artists, "tracks": tracks, "albums": albums},
     )
+
+def songs_page(request):
+    return render(request, "signed-in/songs_page.html", {})
