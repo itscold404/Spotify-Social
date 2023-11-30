@@ -13,6 +13,7 @@
             <a class="navbar-brand" href="{% url 'user_home_page' %}">Spotify Social</a>
             <a class="navbar-brand" href="{% url 'logout' %}">Log Out</a>
             <a class="navbar-brand" href="{% url 'user_profile_page' %}">Profile</a>
+            <a class="navbar-brand" href="{% url 'song_page' %}">Song</a>
 
             <form id="APISearchForm" action="{%url 'search'%}" method="post">
                 {% csrf_token %}
