@@ -578,7 +578,7 @@ def fill_top_items(items: list, user_name, type):
                 """
                 UPDATE user_top_items
                 SET item_id=%s
-                WHERE user_name = %s and item_ranking = %s, and item_type=%s;
+                WHERE user_name = %s and item_ranking = %s and item_type=%s;
                 """,
                 (items[i][0], user_name, i + 1, type),
                 False,
