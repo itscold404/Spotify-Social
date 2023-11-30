@@ -552,41 +552,42 @@ def search_profile(request):
 # top items
 # ----------------------------------------------------------------------------
 def fill_top_items(items: list, user_name, type):
-    db = Database()
+    if len(items) > 0:
+        db = Database()
 
-    for i in range(PROFILE_LIMIT_ITEMS):
-        result = db.execute(
-            """
-            SELECT *
-            FROM user_top_items
-            WHERE item_type=%s and item_ranking = %s;
-            """,
-            (type, i + 1),
-            True,
-        )
+        for i in range(len(items)):
+            result = db.execute(
+                """
+                SELECT *
+                FROM user_top_items
+                WHERE item_type=%s and item_ranking = %s;
+                """,
+                (type, i + 1),
+                True,
+            )
 
-        # if there is nothing for that type and ranking, then add to the table
-        if result[0] == 0:
-            db.execute(
-                """
-                INSERT INTO user_top_items (user_name, item_id, item_type, item_ranking)
-                VALUES (%s, %s, %s, %s);
-                """,
-                (user_name, items[i][0], type, i + 1),
-                False,
-            )
-        # if there is an item for that type and ranking, then update the table
-        elif result[0] == 1:
-            db.execute(
-                """
-                UPDATE user_top_items
-                SET item_id=%s
-                WHERE user_name = %s and item_ranking = %s and item_type=%s;
-                """,
-                (items[i][0], user_name, i + 1, type),
-                False,
-            )
-    db.update_db_and_close()
+            # if there is nothing for that type and ranking, then add to the table
+            if result[0] == 0:
+                db.execute(
+                    """
+                    INSERT INTO user_top_items (user_name, item_id, item_type, item_ranking)
+                    VALUES (%s, %s, %s, %s);
+                    """,
+                    (user_name, items[i][0], type, i + 1),
+                    False,
+                )
+            # if there is an item for that type and ranking, then update the table
+            elif result[0] == 1:
+                db.execute(
+                    """
+                    UPDATE user_top_items
+                    SET item_id=%s
+                    WHERE user_name = %s and item_ranking = %s and item_type=%s;
+                    """,
+                    (items[i][0], user_name, i + 1, type),
+                    False,
+                )
+        db.update_db_and_close()
 
 
 # ----------------------------------------------------------------------------
@@ -605,8 +606,6 @@ def view_user_profile(request):
         (user_name,),
         True,
     )
-
-    db.close()
 
     # if the user_name exists in the database
     if result[0] == 1:
@@ -632,6 +631,8 @@ def view_user_profile(request):
             True,
         )
 
+        db.update_db_and_close()
+
         artist_id_list = []
         track_id_list = []
         auth_header = request.session["auth_header"]
@@ -655,6 +656,7 @@ def view_user_profile(request):
             get_display_info([artists, tracks]),
         ]
 
-        print(result[1], artists, tracks)
+    else:
+        db.close()
 
     return redirect(reverse("view_profile_page"))
