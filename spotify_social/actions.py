@@ -497,10 +497,10 @@ def search_items(request):
 
 
 # ----------------------------------------------------------------------------
-# retrieve information (user top tracks and artists) from spotify api
-# to load in user profile
+# retrieve information for the current useer(user top tracks and artists)
+# from spotify api to load in user profile
 # ----------------------------------------------------------------------------
-def load_profile(request):
+def load_user_profile(request):
     # check if user is signed in before proceeding
     if "user_id" not in request.session:
         return redirect(reverse("login_page"))
@@ -514,7 +514,9 @@ def load_profile(request):
         if artists == "ERROR" or tracks == "ERROR":
             return authorize(request)
 
-        request.session["top_items_user_profile"] = get_display_info([artists, tracks])
+        display_info = get_display_info([artists, tracks])
+        request.session["top_items_user_profile"] = display_info
+        fill_top_items(display_info)
 
         return redirect(reverse("search_page"))
 
@@ -547,3 +549,39 @@ def search_profile(request):
     num_profiles = min(10, matches)  # number of profiles to display
     request.session["searched_profiles"] = profiles[0:num_profiles]
     return redirect(reverse("search_profile_page"))
+
+
+# ----------------------------------------------------------------------------
+# update the user_top_items table with the updated current user's
+# top items
+# ----------------------------------------------------------------------------
+# def fill_top_items(artists: list, tracks: list):
+#     print(artists)
+#     print(tracks)
+# db = Database()
+
+# for i in range(len(artists)):
+#     result = db.execute(
+#         """
+#         SELECT *
+#         FROM user_top_items
+#         WHERE item_type = "artist" and item_ranking = %s;
+#         """,
+#         (i + 1,),
+#         True,
+#     )
+
+#     if result[0] == 0:
+#         result = db.execute(
+#             """
+#             INSERT INTO user_top_items (user_name, first_name, last_name)
+#             VALUES (%s, %s, %s);
+#             """,
+#             (i + 1,),
+#             False,
+#         )
+
+
+# ----------------------------------------------------------------------------
+# retrieve information of a different profile to display
+# ----------------------------------------------------------------------------

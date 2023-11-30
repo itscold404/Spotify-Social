@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from spotify_social.database import *
-from spotify_social.actions import get_callback, load_profile
+from spotify_social.actions import get_callback, load_user_profile
 
 
 # Shows the user the landing page. This should be the first page they see
@@ -88,7 +88,7 @@ def user_profile_page(request):
     # TODO: THIS IS CAUSING ERROR. NEED TO COMMENT THIS, AUTORIZE USER, THEN UNCOMMENT TO GET
     # PASS THIS ISSUE CURRENTLY
 
-    load_profile(request)
+    load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_artists = request.session["top_items_user_profile"][0]

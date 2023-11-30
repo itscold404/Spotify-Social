@@ -68,8 +68,8 @@
             function execute_logout() {
                 if (confirm("Do you want to logout?")) {
                     window.open("https://www.spotify.com/logout/", "_blank");
+                    window.location.href = '{% url "logout" %}';
                 }
-                window.location.href = '{% url "logout" %}';
             }
         </script>
     </body>
