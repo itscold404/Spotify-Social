@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.http import HttpResponseRedirect
 from spotify_social.database import *
@@ -27,7 +27,7 @@ CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 REDIRECT_URI = "http://127.0.0.1:8000/home"
 
-# TODO: UNCOMMENT THIS WHEN PUSHING TO CLOUD
+# # TODO: UNCOMMENT THIS WHEN PUSHING TO CLOUD
 # REDIRECT_URI = "https://spotify-social-media.uk.r.appspot.com/home/"
 
 
@@ -165,6 +165,10 @@ def create_account(request):
 # Update user profile with the info they input
 # ----------------------------------------------------------------------------
 def update_profile(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if request.method == "POST":
         user = request.session["user_id"]
         bio = request.POST.get("bio")
@@ -195,6 +199,10 @@ def update_profile(request):
 # Logs the user out if they are signed in
 # ----------------------------------------------------------------------------
 def logout(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     request.session.flush()
     messages.success(request, "You have logged out")
 
@@ -205,6 +213,10 @@ def logout(request):
 # Deletes the user profile
 # ----------------------------------------------------------------------------
 def delete_profile(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if "user_id" in request.session:
         user_name = request.session["user_id"]
 
@@ -230,6 +242,10 @@ def delete_profile(request):
 # get authorization from user to use account information
 # ----------------------------------------------------------------------------
 def authorize(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     state = secrets.token_urlsafe(16)
     scope = "user-top-read user-read-recently-played"  # Read access to a user's top artists and tracks and recently played tracks
 
@@ -278,6 +294,10 @@ def get_token(auth_code):
 # store spotify callback code and state
 # ----------------------------------------------------------------------------
 def get_callback(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if "state" in request.GET and "code" in request.GET:
         code = request.GET.get("code")
         state = request.GET.get("state")
@@ -435,7 +455,11 @@ def get_display_info(matches: list):
 # sends request to spotify api to get artists, tracks, ablumbs that matches
 # what the user is searching for
 # ----------------------------------------------------------------------------
-def search(request):
+def search_items(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if request.method == "POST":
         searched_phrase = request.POST.get("searched-phrase")
 
@@ -473,10 +497,14 @@ def search(request):
 
 
 # ----------------------------------------------------------------------------
-# retrieve information (user top tracks and artists) from spotify api
-# to load in user profile
+# retrieve information for the current useer(user top tracks and artists)
+# from spotify api to load in user profile
 # ----------------------------------------------------------------------------
-def load_profile(request):
+def load_user_profile(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if "code" in request.session and "auth_header" in request.session:
         token = request.session["auth_header"]
         artists = get_user_top_items(token, "artists", PROFILE_LIMIT_ARTISTS)
@@ -486,9 +514,74 @@ def load_profile(request):
         if artists == "ERROR" or tracks == "ERROR":
             return authorize(request)
 
-        request.session["top_items_user_profile"] = get_display_info([artists, tracks])
+        display_info = get_display_info([artists, tracks])
+        request.session["top_items_user_profile"] = display_info
+        fill_top_items(display_info)
 
         return redirect(reverse("search_page"))
 
     # TODO: search on other pages will also redirect to user home page
     return redirect(reverse("user_home_page"))
+
+
+# ----------------------------------------------------------------------------
+# retrieve user profiles that have similar names to input
+# ----------------------------------------------------------------------------
+def search_profile(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
+    sUser_name = request.POST.get("searched-profile")
+    pattern = f"{sUser_name}%"
+    db = Database()
+    result = db.execute(
+        """
+        SELECT * 
+        FROM user_profile
+        WHERE user_name LIKE %s;
+        """,
+        (pattern,),
+        True,
+    )
+    db.close()
+    matches, profiles = result[0], result[1]
+    num_profiles = min(10, matches)  # number of profiles to display
+    request.session["searched_profiles"] = profiles[0:num_profiles]
+    return redirect(reverse("search_profile_page"))
+
+
+# ----------------------------------------------------------------------------
+# update the user_top_items table with the updated current user's
+# top items
+# ----------------------------------------------------------------------------
+# def fill_top_items(artists: list, tracks: list):
+#     print(artists)
+#     print(tracks)
+# db = Database()
+
+# for i in range(len(artists)):
+#     result = db.execute(
+#         """
+#         SELECT *
+#         FROM user_top_items
+#         WHERE item_type = "artist" and item_ranking = %s;
+#         """,
+#         (i + 1,),
+#         True,
+#     )
+
+#     if result[0] == 0:
+#         result = db.execute(
+#             """
+#             INSERT INTO user_top_items (user_name, first_name, last_name)
+#             VALUES (%s, %s, %s);
+#             """,
+#             (i + 1,),
+#             False,
+#         )
+
+
+# ----------------------------------------------------------------------------
+# retrieve information of a different profile to display
+# ----------------------------------------------------------------------------

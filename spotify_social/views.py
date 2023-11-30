@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.urls import reverse
 from spotify_social.database import *
-from spotify_social.actions import get_callback, load_profile
+from spotify_social.actions import get_callback, load_user_profile
 
 
 # Shows the user the landing page. This should be the first page they see
+# TODO: clean up landing page of user info
 def landing_page(request):
     # results_django = run_query("SELECT * FROM user_profile;")
 
@@ -45,17 +46,30 @@ def signup_page(request):
 
 
 def authorize_spotify(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     return render(request, "signed-in/authorize.html", {})
 
 
 def user_home_page(request):
-    # TODO: populate user home page by passing variables into HTML below
+    # check if user is signed in before proceeding
+    if "user_id" in request.session:
+        # TODO: populate user home page by passing variables into HTML below
 
-    get_callback(request)
-    return render(request, "signed-in/home_page.html", {})
+        get_callback(request)
+        return render(request, "signed-in/home_page.html", {})
+
+    else:
+        return redirect(reverse("login_page"))
 
 
 def user_profile_page(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     user_name = request.session["user_id"]
     db = Database()
     result = db.execute(
@@ -74,7 +88,7 @@ def user_profile_page(request):
     # TODO: THIS IS CAUSING ERROR. NEED TO COMMENT THIS, AUTORIZE USER, THEN UNCOMMENT TO GET
     # PASS THIS ISSUE CURRENTLY
 
-    load_profile(request)
+    load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_artists = request.session["top_items_user_profile"][0]
@@ -88,10 +102,18 @@ def user_profile_page(request):
 
 
 def user_edit_profile_page(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     return render(request, "signed-in/edit_profile_page.html", {})
 
 
 def search_page(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     if "search_results" in request.session:
         artists = request.session["search_results"][0]
         tracks = request.session["search_results"][1]
@@ -99,6 +121,20 @@ def search_page(request):
 
     return render(
         request,
-        "signed-in/search_page.html",
+        "search pages/search_items.html",
         {"artists": artists, "tracks": tracks, "albums": albums},
+    )
+
+
+def search_profile_page(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
+    profiles = request.session.pop("searched_profiles", {})
+
+    return render(
+        request,
+        "search pages/search_profile.html",
+        {"profiles": profiles},
     )

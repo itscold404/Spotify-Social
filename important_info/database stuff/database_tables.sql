@@ -132,6 +132,16 @@ CREATE TABLE `user_login` (
    CONSTRAINT `fk_user_login_user_profile` Foreign key (user_name) references user_profile (user_name) ON delete cascade
 );
 
+CREATE TABLE `user_top_items` (
+  `user_name` varchar(255) NOT NULL,
+  `item_id` varchar(255) NOT NULL,
+  `item_type` varchar(255) NOT NULL,
+  `item_ranking` int NOT NULL,
+   Primary key (user_name),
+   CONSTRAINT checkRank CHECK (item_ranking >= 1),
+   CONSTRAINT `fk_user_top_items_user_profile` Foreign key (user_name) references user_profile (user_name) ON delete cascade
+);
+
 DELIMITER $$
 CREATE TRIGGER makeFullName
 BEFORE INSERT ON user_profile
