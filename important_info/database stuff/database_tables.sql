@@ -137,7 +137,7 @@ CREATE TABLE `user_top_items` (
   `item_id` varchar(255) NOT NULL,
   `item_type` varchar(255) NOT NULL,
   `item_ranking` int NOT NULL,
-   Primary key (user_name),
+   Primary key (user_name, item_type, item_ranking),
    CONSTRAINT checkRank CHECK (item_ranking >= 1),
    CONSTRAINT `fk_user_top_items_user_profile` Foreign key (user_name) references user_profile (user_name) ON delete cascade
 );

@@ -19,9 +19,8 @@ SEARCH_LIMIT_ARTIST = 6
 SEARCH_LIMIT_TRACK = 6
 SEARCH_LIMIT_ALBUM = 6
 
-# how many of each category of user's top items should be displayed in his/her profile
-PROFILE_LIMIT_ARTISTS = 5
-PROFILE_LIMIT_TRACKS = 5
+# how many of each category (tracks, artists) of user's top items should be displayed in his/her profile
+PROFILE_LIMIT_ITEMS = 5
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
@@ -507,8 +506,8 @@ def load_user_profile(request):
 
     if "code" in request.session and "auth_header" in request.session:
         token = request.session["auth_header"]
-        artists = get_user_top_items(token, "artists", PROFILE_LIMIT_ARTISTS)
-        tracks = get_user_top_items(token, "tracks", PROFILE_LIMIT_TRACKS)
+        artists = get_user_top_items(token, "artists", PROFILE_LIMIT_ITEMS)
+        tracks = get_user_top_items(token, "tracks", PROFILE_LIMIT_ITEMS)
 
         # spotify authorization expired, reauthorize
         if artists == "ERROR" or tracks == "ERROR":
@@ -516,12 +515,8 @@ def load_user_profile(request):
 
         display_info = get_display_info([artists, tracks])
         request.session["top_items_user_profile"] = display_info
-        fill_top_items(display_info)
-
-        return redirect(reverse("search_page"))
-
-    # TODO: search on other pages will also redirect to user home page
-    return redirect(reverse("user_home_page"))
+        fill_top_items(display_info[0], request.session["user_id"], "artist")
+        fill_top_items(display_info[1], request.session["user_id"], "track")
 
 
 # ----------------------------------------------------------------------------
@@ -555,31 +550,40 @@ def search_profile(request):
 # update the user_top_items table with the updated current user's
 # top items
 # ----------------------------------------------------------------------------
-# def fill_top_items(artists: list, tracks: list):
-#     print(artists)
-#     print(tracks)
-# db = Database()
+def fill_top_items(items: list, user_name, type):
+    db = Database()
 
-# for i in range(len(artists)):
-#     result = db.execute(
-#         """
-#         SELECT *
-#         FROM user_top_items
-#         WHERE item_type = "artist" and item_ranking = %s;
-#         """,
-#         (i + 1,),
-#         True,
-#     )
+    for i in range(PROFILE_LIMIT_ITEMS):
+        result = db.execute(
+            """
+            SELECT *
+            FROM user_top_items
+            WHERE item_type=%s and item_ranking = %s;
+            """,
+            (type, i + 1),
+            True,
+        )
 
-#     if result[0] == 0:
-#         result = db.execute(
-#             """
-#             INSERT INTO user_top_items (user_name, first_name, last_name)
-#             VALUES (%s, %s, %s);
-#             """,
-#             (i + 1,),
-#             False,
-#         )
+        if result[0] == 0:
+            db.execute(
+                """
+                INSERT INTO user_top_items (user_name, item_id, item_type, item_ranking)
+                VALUES (%s, %s, %s, %s);
+                """,
+                (user_name, items[i][0], type, i + 1),
+                False,
+            )
+        elif result[0] == 1:
+            db.execute(
+                """
+                UPDATE user_top_items
+                SET item_id=%s
+                WHERE user_name = %s and item_ranking = %s, and item_type=%s;
+                """,
+                (items[i][0], user_name, i + 1, type),
+                False,
+            )
+    db.update_db_and_close()
 
 
 # ----------------------------------------------------------------------------
