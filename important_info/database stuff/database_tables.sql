@@ -35,29 +35,29 @@ CREATE TABLE `album` (
 );
 
 -- remove
-CREATE TABLE `album_by` (
-  `album_id` varchar(255) NOT NULL,
-  `artist_id` varchar(255) NOT NULL,
-   Primary key (album_id, artist_id),
-   CONSTRAINT `fk_album_by_album` Foreign key (album_id) references album (album_id),
-   CONSTRAINT `fk_album_by_artist` Foreign key (artist_id) references artist (artist_id)
-);
+-- CREATE TABLE `album_by` (
+--   `album_id` varchar(255) NOT NULL,
+--   `artist_id` varchar(255) NOT NULL,
+--    Primary key (album_id, artist_id),
+--    CONSTRAINT `fk_album_by_album` Foreign key (album_id) references album (album_id),
+--    CONSTRAINT `fk_album_by_artist` Foreign key (artist_id) references artist (artist_id)
+-- );
 
 -- remove 
-CREATE TABLE `album_genre` (
-  `album_id` varchar(255) NOT NULL,
-  `genre` varchar(20) NOT NULL,
-   Primary key (album_id),
-   CONSTRAINT `fk_album_genre_album` Foreign key (album_id) references album (album_id)
-);
+-- CREATE TABLE `album_genre` (
+--   `album_id` varchar(255) NOT NULL,
+--   `genre` varchar(20) NOT NULL,
+--    Primary key (album_id),
+--    CONSTRAINT `fk_album_genre_album` Foreign key (album_id) references album (album_id)
+-- );
 
 -- remove 
-CREATE TABLE `artist_genre` (
-  `artist_id` varchar(255) NOT NULL,
-  `genre` varchar(20) NOT NULL,
-   Primary key (artist_id),
-   CONSTRAINT `fk_artist_genre_artist` Foreign key (artist_id) references artist (artist_id)
-);
+-- CREATE TABLE `artist_genre` (
+--   `artist_id` varchar(255) NOT NULL,
+--   `genre` varchar(20) NOT NULL,
+--    Primary key (artist_id),
+--    CONSTRAINT `fk_artist_genre_artist` Foreign key (artist_id) references artist (artist_id)
+-- );
 
 CREATE TABLE `follows_artist` (
     `user_name` varchar(255) NOT NULL,
@@ -83,22 +83,24 @@ CREATE TABLE `post` (
     CONSTRAINT `fk_post_user_profile` Foreign key (user_name) references user_profile (user_name) ON delete cascade
 );
 
-CREATE TABLE `school_song_chart` (
-  `school_name` varchar(255) NOT NULL,
-  `ranking` int(11) NOT NULL,
-  `song_id` varchar(255) NOT NULL,
-   Primary key (school_name, ranking),
-   CONSTRAINT `fk_school_song_chart_song` Foreign key (song_id) references song (song_id)
-);
+-- remove
+-- CREATE TABLE `school_song_chart` (
+--   `school_name` varchar(255) NOT NULL,
+--   `ranking` int(11) NOT NULL,
+--   `song_id` varchar(255) NOT NULL,
+--    Primary key (school_name, ranking),
+--    CONSTRAINT `fk_school_song_chart_song` Foreign key (song_id) references song (song_id)
+-- );
 
 -- remove 
-CREATE TABLE `song_by` (
-  `song_id` varchar(255) NOT NULL,
-  `artist_id` varchar(255) NOT NULL,
-   Primary key (song_id, artist_id),
-   CONSTRAINT `fk_song_by_song` Foreign key (song_id) references song (song_id),
-   CONSTRAINT `fk_song_by_artist` Foreign key (artist_id) references artist (artist_id)
-);
+-- CREATE TABLE `song_by` (
+--   `song_id` varchar(255) NOT NULL,
+--   `artist_id` varchar(255) NOT NULL,
+--    Primary key (song_id, artist_id),
+--    CONSTRAINT `fk_song_by_song` Foreign key (song_id) references song (song_id),
+--    CONSTRAINT `fk_song_by_artist` Foreign key (artist_id) references artist (artist_id)
+-- );
+
 
 CREATE TABLE `upvote_album` (
   `user_name` varchar(255) NOT NULL,
@@ -109,14 +111,16 @@ CREATE TABLE `upvote_album` (
    CONSTRAINT `fk_upvote_album_album` Foreign key (album_id) references album (album_id) ON delete cascade
 );
 
-CREATE TABLE `upvote_post` (
-  `upvoter` varchar(255) NOT NULL,
-  `receiver` varchar(255) NOT NULL,
-  `date_time` timestamp NOT NULL,
-   Primary key (upvoter, receiver, date_time),
-   CONSTRAINT `fk_upvote_post_user_profile` Foreign key (upvoter) references user_profile (user_name) ON delete cascade,
-   CONSTRAINT `fk_upvote_post_post` Foreign key (receiver, date_time) references post (user_name, date_time) ON delete cascade
-);
+-- remove 
+-- CREATE TABLE `upvote_post` (
+--   `upvoter` varchar(255) NOT NULL,
+--   `receiver` varchar(255) NOT NULL,
+--   `date_time` timestamp NOT NULL,
+--    Primary key (upvoter, receiver, date_time),
+--    CONSTRAINT `fk_upvote_post_user_profile` Foreign key (upvoter) references user_profile (user_name) ON delete cascade,
+--    CONSTRAINT `fk_upvote_post_post` Foreign key (receiver, date_time) references post (user_name, date_time) ON delete cascade
+-- );
+
 
 CREATE TABLE `upvote_song` (
     `user_name` varchar(255) NOT NULL,
