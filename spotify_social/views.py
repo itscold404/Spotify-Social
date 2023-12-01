@@ -109,12 +109,15 @@ def songs_page(request):
 def albums_page(request):
     return render(request, "signed-in/albums_page.html", {})
 
+
+#attempts to load posts, does not work
 def posts_page(request):
     # Check if the keys exist in the session
+    
     db = Database()
     posts = db.execute(
         """
-        SELECT user_name, date_time, content
+        SELECT *
         FROM post
         ORDER BY date_time DESC;
         """,
@@ -124,4 +127,9 @@ def posts_page(request):
     db.close()
     print(posts)
     return render(request, 'signed-in/posts_page.html', {'posts':posts})
+
+# view for create posts
+
+def create_posts_page(request):
+    return render(request, 'signed-in/create_posts_page.html', {})
    

@@ -11,6 +11,7 @@ import urllib.parse
 import secrets
 import os
 import base64
+from datetime import datetime
 
 load_dotenv()
 
@@ -495,27 +496,37 @@ def load_profile(request):
 
 
 # ----------------------------------------------------------------------------
-# receives post request, retrieves title, content from form, executes query to
-# add into database
+# updates posts table with the info that is inputted by user
 # ----------------------------------------------------------------------------
 
 def create_post(request):
     if request.method == 'POST':
-        title = request.POST.get('title')
+        user_name = request.POST.get('user_name')
         content = request.POST.get('content')
 
-        # Assuming you have a 'posts' table in your database
-        query = "INSERT INTO posts (title, content) VALUES (%s, %s)"
-        args = (title, content)
+        # adding current date time to the list of parameters to take in
+        current_timestamp = datetime.now()
 
+        # trying to insert values into the posts table
         db = Database()
-        db.execute(query, args, return_result=False)
+        db.execute(
+            """
+            INSERT INTO post (user_name, date_time, content)
+            VALUES (%s, %s, %s);
+            """,
+            (user_name,current_timestamp,content),
+            False,
+        )
+
         db.update_db_and_close()
+        messages.success(request, "Posted!")
 
         # Redirect to the same page to avoid form resubmission on page reload
-        return redirect('posts_page')
+        return redirect(reverse('create_posts_page'))
 
-    return render(request, 'signed-in/posts_page.html', {})
+    return render(request, 'signed-in/create_posts_page.html', {})
+
+
 
 
 # ----------------------------------------------------------------------------

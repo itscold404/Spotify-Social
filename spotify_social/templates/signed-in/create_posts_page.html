@@ -1,0 +1,17 @@
+{% extends "signed-in/base.html"%} 
+
+{% block content %}
+<h1>What are you feeling today?</h1>
+
+<form method="post" action="{% url 'create_post' %}">
+    {% csrf_token %}
+    <label for="user_name">User Name:</label>
+    <input type="text" name="user_name" required><br>
+
+    <label for="content">Content:</label>
+    <textarea name="content" required></textarea><br>
+
+    <button type="submit">Submit Post</button>
+</form>
+
+{% endblock %}
