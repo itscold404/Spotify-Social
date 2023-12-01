@@ -1,0 +1,38 @@
+{% extends "signed-in/base.html"%} {% block content %}
+
+<style>
+    h1 {text-align: center;}
+</style>
+
+<h1>ARTISTS</h1>
+{% for artist in top_artists %}
+    <div class="card">
+        <div class="row">
+            <div class="col col-md-6">
+                <img src="{{artist.5}}" class="img-fluid artist-image" alt="Responsive image">
+            </div>
+
+            <div class="col col-md-6">
+                <input type="hidden" id="a{{artist.0}}" name="artistID" value="{{artist.0}}" />
+                <div class="card-body">
+                    {{artist.1}}
+                    <p>
+                        Followers: {{artist.2}}
+                    </p>
+                    <p>
+                        Genre(s):
+                        {% for a in artist.4 %}
+                            {{a}}
+                            {% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    </p>
+                    <p>
+                        Popularity: {{artist.3}}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+<br></br>
+{% endblock %}

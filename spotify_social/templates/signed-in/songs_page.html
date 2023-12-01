@@ -1,0 +1,34 @@
+{% extends "signed-in/base.html"%} {% block content %}
+
+<style>
+    h1 {text-align: center;}
+</style>
+
+<h1>Songs</h1>
+{% for track in top_tracks %}
+    <div class="card">
+        <div class="row">
+            <div class="col col-md-6">
+                <input type="hidden" id="t{{track.0}}" name="trackID" value="{{track.0}}" />
+                <div class="card-body">
+                    {{track.1}}
+                    <p>
+                        By:
+                        {% for a in track.4 %}
+                            {{a}}
+                            {% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    </p>
+                    <p>
+                        Duration (in milliseconds): {{track.3}}
+                    </p>
+                    <p>
+                        Popularity: {{track.2}}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+<br></br>
+{% endblock %}

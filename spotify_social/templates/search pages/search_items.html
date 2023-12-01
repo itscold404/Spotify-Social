@@ -6,13 +6,16 @@
         <div class="card">
             <div class="row">
                 <div class="col col-md-6">
-                    <img src="{{artist.3}}" class="img-fluid artist-image" alt="Responsive image">
+                    <img src="{{artist.5}}" class="img-fluid artist-image" alt="Responsive image">
                 </div>
 
                 <div class="col col-md-6">
                     <input type="hidden" id="a{{artist.0}}" name="artistID" value="{{artist.0}}" />
                     <div class="card-body">
-                        {{artist.1}} -- Followers: {{artist.2}}
+                        {{artist.1}}
+                        <p>
+                            Followers: {{artist.2}}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -26,10 +29,18 @@
                 <div class="col col-md-6">
                     <input type="hidden" id="t{{track.0}}" name="trackID" value="{{track.0}}" />
                     <div class="card-body">
-                        {{track.1}} by:
-                        {% for a in track.2 %}
-                            {{a}}, 
-                        {% endfor %}
+                        {{track.1}}
+                        <p>
+                            By:
+                            {% for a in track.5 %}
+                                {{a}}
+                                {% if not forloop.last %},{% endif %}
+                            {% endfor %}
+                        </p>
+                        <p>
+                            Released:
+                            {{track.4}}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -47,11 +58,14 @@
                 <div class="col col-md-6">
                     <input type="hidden" id="al{{album.0}}" name="albumID" value="{{album.0}}" />
                     <div class="card-body">
-                        {{track.1}} by:
-                        {% for a in album.4 %}
-                            {{a}}, 
-                        {% endfor %}
-                        Number of tracks: {{album.2}}
+                        {{album.1}} 
+                        <p>
+                            By:
+                            {% for a in album.4 %}
+                                {{a}}
+                                {% if not forloop.last %},{% endif %}
+                            {% endfor %}
+                        </p>
                     </div>
                 </div>
             </div>

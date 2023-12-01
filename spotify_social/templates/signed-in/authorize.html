@@ -1,6 +1,53 @@
-<h2>
-    Please log into you spotify account
-    <h2>
-        <a type="button" class="btn btn-primary" href="{% url 'authorize' %}">Log into Spotify!</a>
-    </h2>
-</h2>
+
+{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="style.css" />
+
+    <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #1db954;">
+    <a class="navbar-brand">Spotify Social</a>
+    </nav>
+  </head>
+  <br />
+  <br />
+  <body>
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-md-4 col-sm-6 col-xs-12 text-center">
+          <form class="form-container" action="{%url 'check_credentials'%}" method="POST">
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert">
+                          ×
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% csrf_token %}
+            <h3 class="text-center mb-3">Please log in to your Spotify Account!</h3>
+            <br />
+
+            <a type="button" class="btn btn-primary btn-block" href="{% url 'authorize' %}" style="background-color:#1db954; border:none">Log in to Spotify!</a>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/esm/popper"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

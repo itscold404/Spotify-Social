@@ -4,8 +4,10 @@ from spotify_social.database import *
 from spotify_social.actions import get_callback, load_user_profile
 
 
-# Shows the user the landing page. This should be the first page they see
+# ----------------------------------------------------------------------------
+# # Shows the user the landing page. This should be the first page they see
 # TODO: clean up landing page of user info
+# ----------------------------------------------------------------------------
 def landing_page(request):
     # results_django = run_query("SELECT * FROM user_profile;")
 
@@ -20,10 +22,16 @@ def landing_page(request):
     return render(request, "signed-out/landing_page.html", {"results": result[1]})
 
 
+# ----------------------------------------------------------------------------
+# displays a page for user to log in
+# ----------------------------------------------------------------------------
 def login_page(request):
     return render(request, "signed-out/login_page.html", {})
 
 
+# ----------------------------------------------------------------------------
+# displays a page for the user to create an account
+# ----------------------------------------------------------------------------
 def signup_page(request):
     # if username taken or password mismatch, user info stored in request.session["user_inputs"]
     if "user_inputs" in request.session:
@@ -45,6 +53,9 @@ def signup_page(request):
     return render(request, "signed-out/signup_page.html", {})
 
 
+# ----------------------------------------------------------------------------
+# displays a page to ask user to sign into spotify
+# ----------------------------------------------------------------------------
 def authorize_spotify(request):
     # check if user is signed in before proceeding
     if "user_id" not in request.session:
@@ -53,6 +64,10 @@ def authorize_spotify(request):
     return render(request, "signed-in/authorize.html", {})
 
 
+# ----------------------------------------------------------------------------
+# displays the home page of the user
+# TODO: could add posts here
+# ----------------------------------------------------------------------------
 def user_home_page(request):
     # check if user is signed in before proceeding
     if "user_id" in request.session:
@@ -65,6 +80,10 @@ def user_home_page(request):
         return redirect(reverse("login_page"))
 
 
+# ----------------------------------------------------------------------------
+# displays the profile of the current user
+# TODO: show that there are no top songs/artists if the user does not
+# ----------------------------------------------------------------------------
 def user_profile_page(request):
     # check if user is signed in before proceeding
     if "user_id" not in request.session:
@@ -85,9 +104,6 @@ def user_profile_page(request):
     top_artists = []
     top_tracks = []
 
-    # TODO: THIS IS CAUSING ERROR. NEED TO COMMENT THIS, AUTORIZE USER, THEN UNCOMMENT TO GET
-    # PASS THIS ISSUE CURRENTLY
-
     load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
@@ -101,6 +117,9 @@ def user_profile_page(request):
     )
 
 
+# ----------------------------------------------------------------------------
+# display the profile editing page
+# ----------------------------------------------------------------------------
 def user_edit_profile_page(request):
     # check if user is signed in before proceeding
     if "user_id" not in request.session:
@@ -109,6 +128,9 @@ def user_edit_profile_page(request):
     return render(request, "signed-in/edit_profile_page.html", {})
 
 
+# ----------------------------------------------------------------------------
+# display a page of all the items related to user's search
+# ----------------------------------------------------------------------------
 def search_page(request):
     # check if user is signed in before proceeding
     if "user_id" not in request.session:
@@ -126,6 +148,10 @@ def search_page(request):
     )
 
 
+# ----------------------------------------------------------------------------
+# display a page of all the user profiles with user names similar to
+# what the user searched
+# ----------------------------------------------------------------------------
 def search_profile_page(request):
     # check if user is signed in before proceeding
     if "user_id" not in request.session:
@@ -137,4 +163,88 @@ def search_profile_page(request):
         request,
         "search pages/search_profile.html",
         {"profiles": profiles},
+    )
+
+
+# ----------------------------------------------------------------------------
+# displays the profile that the user wants to view (not his/her own)
+# TODO: show that there are no top songs/artists if the user does not
+# ----------------------------------------------------------------------------
+def view_profile_page(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
+    top_artists = []
+    top_tracks = []
+    if "selected_profile_info" in request.session:
+        user_info, items = request.session["selected_profile_info"]
+        top_artists, top_tracks = items[0], items[1]
+
+    return render(
+        request,
+        "search pages/view_profile_page.html",
+        {"results": user_info, "top_artists": top_artists, "top_tracks": top_tracks},
+    )
+
+
+def songs_page(request):
+    user_name = request.session["user_id"]
+    db = Database()
+    result = db.execute(
+        """
+        SELECT * 
+        FROM user_profile
+        WHERE user_name = %s;
+        """,
+        (user_name,),
+        True,
+    )
+
+    top_artists = []
+    top_tracks = []
+
+    load_user_profile(request)
+
+    if "top_items_user_profile" in request.session:
+        top_artists = request.session["top_items_user_profile"][0]
+        top_tracks = request.session["top_items_user_profile"][1]
+
+    return render(
+        request,
+        "signed-in/songs_page.html",
+        {"results": result[1], "top_artists": top_artists, "top_tracks": top_tracks},
+    )
+
+
+def albums_page(request):
+    return render(request, "signed-in/albums_page.html", {})
+
+
+def artists_page(request):
+    user_name = request.session["user_id"]
+    db = Database()
+    result = db.execute(
+        """
+        SELECT * 
+        FROM user_profile
+        WHERE user_name = %s;
+        """,
+        (user_name,),
+        True,
+    )
+
+    top_artists = []
+    top_tracks = []
+
+    load_user_profile(request)
+
+    if "top_items_user_profile" in request.session:
+        top_artists = request.session["top_items_user_profile"][0]
+        top_tracks = request.session["top_items_user_profile"][1]
+
+    return render(
+        request,
+        "signed-in/artists_page.html",
+        {"results": result[1], "top_artists": top_artists, "top_tracks": top_tracks},
     )

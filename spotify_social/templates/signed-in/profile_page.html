@@ -1,5 +1,5 @@
 {% extends "signed-in/base.html"%} {% block content%}
-<a type="button" class="btn btn-primary" href="{% url 'user_edit_profile_page' %}">edit profile</a>
+<a type="button" class="btn btn-primary" href="{% url 'user_edit_profile_page' %}">Edit Profile</a>
 <a type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirm">Delete Account</a>
 
 <div id="user_info">
@@ -32,12 +32,12 @@
     </table>
 </div>
 
-<h2>TOP ARTISTS</h2>
+<h1>TOP ARTISTS</h1>
 {% for artist in top_artists %}
     <div class="card">
         <div class="row">
             <div class="col col-md-6">
-                <img src="{{artist.3}}" class="img-fluid artist-image" alt="Responsive image">
+                <img src="{{artist.5}}" class="img-fluid artist-image" alt="Responsive image">
             </div>
 
             <div class="col col-md-6">
@@ -57,10 +57,14 @@
             <div class="col col-md-6">
                 <input type="hidden" id="t{{track.0}}" name="trackID" value="{{track.0}}" />
                 <div class="card-body">
-                    {{track.1}} by:
-                    {% for a in track.2 %}
-                        {{a}}, 
-                    {% endfor %}
+                    {{track.1}}
+                    <p>
+                        By:
+                        {% for a in track.4 %}
+                            {{a}}
+                            {% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    </p>
                 </div>
             </div>
         </div>
