@@ -492,3 +492,27 @@ def load_profile(request):
 
     # TODO: search on other pages will also redirect to user home page
     return redirect(reverse("user_home_page"))
+
+
+# ----------------------------------------------------------------------------
+# receives post request, retrieves title, content from form, executes query to
+# add into database
+# ----------------------------------------------------------------------------
+
+def create_post(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+
+        # Assuming you have a 'posts' table in your database
+        query = "INSERT INTO posts (title, content) VALUES (%s, %s)"
+        args = (title, content)
+
+        db = Database()
+        db.execute(query, args, return_result=False)
+        db.update_db_and_close()
+
+        # Redirect to the same page to avoid form resubmission on page reload
+        return redirect('posts_page')
+
+    return render(request, 'signed-in/posts_page.html', {})
