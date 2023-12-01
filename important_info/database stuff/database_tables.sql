@@ -22,6 +22,8 @@ CREATE TABLE `user_profile` (
   `area_of_study` varchar(255) DEFAULT NULL,
   `computing_id` varchar(255) DEFAULT NULL,
   `bio` varchar(200) DEFAULT NULL,
+  `phone_number` varchar(255) NOT NULL,
+  `date_of_birth` varchar(255) NOT NULL,
    CONSTRAINT checkPost CHECK (number_of_posts>=0),
    Primary key (user_name)
 );
@@ -141,6 +143,10 @@ CREATE TABLE `user_top_items` (
    CONSTRAINT checkRank CHECK (item_ranking >= 1),
    CONSTRAINT `fk_user_top_items_user_profile` Foreign key (user_name) references user_profile (user_name) ON delete cascade
 );
+
+CREATE OR REPLACE VIEW protected_profile AS (
+ SELECT user_name, first_name, last_name, full_name, number_of_posts, school, area_of_study, computing_id, bio
+ FROM user_profile);
 
 DELIMITER $$
 CREATE TRIGGER makeFullName
