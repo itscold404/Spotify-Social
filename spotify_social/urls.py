@@ -24,4 +24,6 @@ urlpatterns = [
     path("authorize/", actions.authorize, name="authorize"),
     path("search_profile/", actions.search_profile, name="search_profile"),
     path("view_user/", actions.view_user_profile, name="view_user_profile"),
+    path("follow_profile/", actions.follow_profile, name="follow_profile"),
+    path("unfollow_profile/", actions.unfollow_profile, name="unfollow_profile"),
 ]

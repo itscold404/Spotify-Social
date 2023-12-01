@@ -619,6 +619,18 @@ def view_user_profile(request):
         True,
     )
 
+    follow = db.execute(
+        """
+        SELECT *
+        FROM follows_profile
+        WHERE user_name_follower=%s and user_name_following=%s;
+        """,
+        (request.session["user_id"], user_name),
+        True,
+    )
+
+    isFollowing = True if (follow[0] == 1) else False
+
     # if the user_name exists in the database
     if result[0] == 1:
         artists = db.execute(
@@ -663,12 +675,107 @@ def view_user_profile(request):
         for t in track_id_list:
             tracks.append(find_track(auth_header, t))
 
+        # stores user info, top items, and if current user is following this profile
         request.session["selected_profile_info"] = [
             result[1],
             get_display_info([artists, tracks]),
+            isFollowing,
         ]
 
     else:
         db.close()
 
     return redirect(reverse("view_profile_page"))
+
+
+# ----------------------------------------------------------------------------
+# follow selected user's profile so that you can see their posts
+# ----------------------------------------------------------------------------
+def follow_profile(request):
+    if request.method == "POST":
+        follow_user = request.POST.get("user_name")
+        user_name = request.session["user_id"]
+        db = Database()
+
+        result = db.execute(
+            """
+            SELECT * 
+            FROM follows_profile 
+            WHERE user_name_follower=%s and user_name_following=%s;
+            """,
+            (
+                user_name,
+                follow_user,
+            ),
+            True,
+        )
+
+        # the current user is not following this profile yet
+        if result[0] == 0:
+            db.execute(
+                """
+                INSERT INTO follows_profile (user_name_follower, user_name_following)
+                VALUES (%s, %s);
+                """,
+                (
+                    user_name,
+                    follow_user,
+                ),
+                False,
+            )
+
+            db.update_db_and_close()
+            messages.success(request, f"Followed user {follow_user}")
+
+        else:
+            db.close()
+            messages.warning(request, f"Already following {follow_user}")
+
+    return redirect(reverse("user_home_page"))
+
+
+# ----------------------------------------------------------------------------
+# unfollow selected user's profile if already following the profile
+# ----------------------------------------------------------------------------
+def unfollow_profile(request):
+    if request.method == "POST":
+        follow_user = request.POST.get("user_name")
+        user_name = request.session["user_id"]
+        db = Database()
+
+        result = db.execute(
+            """
+            SELECT * 
+            FROM follows_profile 
+            WHERE user_name_follower=%s and user_name_following=%s;
+            """,
+            (
+                user_name,
+                follow_user,
+            ),
+            True,
+        )
+
+        # the current user is following this profile
+        if result[0] == 1:
+            db.execute(
+                """
+                DELETE FROM follows_profile 
+                WHERE user_name_follower=%s and user_name_following=%s;
+                """,
+                (
+                    user_name,
+                    follow_user,
+                ),
+                True,
+            )
+
+            db.update_db_and_close()
+            messages.success(request, f"Unfollowed user {follow_user}")
+        else:
+            db.close()
+            messages.warning(
+                request, f"Cannot unfollow because not following user {follow_user}"
+            )
+
+    return redirect(reverse("user_home_page"))

@@ -176,11 +176,17 @@ def view_profile_page(request):
     top_artists = []
     top_tracks = []
     if "selected_profile_info" in request.session:
-        user_info, items = request.session["selected_profile_info"]
+        user_info, items, isFollowing = request.session["selected_profile_info"]
         top_artists, top_tracks = items[0], items[1]
 
+    print("currently following user", isFollowing)
     return render(
         request,
         "search pages/view_profile_page.html",
-        {"results": user_info, "top_artists": top_artists, "top_tracks": top_tracks},
+        {
+            "results": user_info,
+            "top_artists": top_artists,
+            "top_tracks": top_tracks,
+            "isFollowing": isFollowing,
+        },
     )
