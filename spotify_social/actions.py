@@ -86,6 +86,8 @@ def create_account(request):
         inputted_user_name = request.POST.get("user_name")
         inputted_fname = request.POST.get("fname")
         inputted_lname = request.POST.get("lname")
+        inputted_phone = request.POST.get("phone_number")
+        inputted_dob = request.POST.get("dob")
         inputted_password = request.POST.get("password")
         inputted_re_password = request.POST.get("re_password")
 
@@ -112,10 +114,16 @@ def create_account(request):
 
                 db.execute(
                     """
-                    INSERT INTO user_profile (user_name, first_name, last_name)
-                    VALUES (%s, %s, %s);
+                    INSERT INTO user_profile (user_name, first_name, last_name, phone_number, date_of_birth)
+                    VALUES (%s, %s, %s, %s, %s);
                     """,
-                    (inputted_user_name, inputted_fname, inputted_lname),
+                    (
+                        inputted_user_name,
+                        inputted_fname,
+                        inputted_lname,
+                        inputted_phone,
+                        inputted_dob,
+                    ),
                     False,
                 )
 
@@ -146,6 +154,8 @@ def create_account(request):
                     inputted_user_name,
                     inputted_fname,
                     inputted_lname,
+                    inputted_phone,
+                    inputted_dob,
                 ]
                 return redirect(reverse("signup_page"))
         else:
@@ -156,6 +166,8 @@ def create_account(request):
                 inputted_user_name,
                 inputted_fname,
                 inputted_lname,
+                inputted_phone,
+                inputted_dob,
             ]
             return redirect(reverse("signup_page"))
 
@@ -258,7 +270,7 @@ def authorize(request):
     query_string = urllib.parse.urlencode(query_parameters)
     spotify_auth_url = f"https://accounts.spotify.com/authorize?{query_string}"
 
-    messages.success(request, "spotify login successful!")
+    messages.success(request, "Spotify login successful!")
     return HttpResponseRedirect(spotify_auth_url)
 
 
@@ -533,7 +545,7 @@ def search_profile(request):
     result = db.execute(
         """
         SELECT * 
-        FROM user_profile
+        FROM protected_profile
         WHERE user_name LIKE %s;
         """,
         (pattern,),
@@ -600,7 +612,7 @@ def view_user_profile(request):
     result = db.execute(
         """
         SELECT *
-        FROM user_profile
+        FROM protected_profile
         WHERE user_name=%s;
         """,
         (user_name,),

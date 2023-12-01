@@ -9,16 +9,10 @@ from spotify_social.actions import get_callback, load_user_profile
 # TODO: clean up landing page of user info
 # ----------------------------------------------------------------------------
 def landing_page(request):
-    # results_django = run_query("SELECT * FROM user_profile;")
-
     db = Database()
     result = db.execute("SELECT * FROM user_profile;", (), True)
 
     db.close()
-    # 'result' is the variable in HTML and results_django is the variable being
-    # passed from django
-
-    # return HttpResponse("hello world")
     return render(request, "signed-out/landing_page.html", {"results": result[1]})
 
 
@@ -39,6 +33,8 @@ def signup_page(request):
         inputted_user_name = user_data[0]
         inputted_fname = user_data[1]
         inputted_lname = user_data[2]
+        inputted_phone = user_data[3]
+        inputted_dob = user_data[4]
 
         return render(
             request,
@@ -47,6 +43,8 @@ def signup_page(request):
                 "username": inputted_user_name,
                 "first_name": inputted_fname,
                 "last_name": inputted_lname,
+                "phone_number": inputted_phone,
+                "dob": inputted_dob,
             },
         )
 
