@@ -1,4 +1,19 @@
 {% extends "signed-in/base.html"%} {% block content%}
+<div id="interactions">
+    {% if isFollowing %}
+        <form class="form-container" action="{%url 'unfollow_profile'%}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" value={{results.0.0}} name="user_name" />
+            <button type="submit" class="btn btn-warning btn-sm">Unfollow Profile</a>
+        </form>
+    {% else %}
+        <form class="form-container" action="{%url 'follow_profile'%}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" value={{results.0.0}} name="user_name" />
+            <button type="submit" class="btn btn-primary btn-sm">Follow Profile</a>
+        </form>
+    {% endif %}
+</div>
 <div id="user_info">
     <table>
         <thead>
