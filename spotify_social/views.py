@@ -108,3 +108,20 @@ def songs_page(request):
 
 def albums_page(request):
     return render(request, "signed-in/albums_page.html", {})
+
+def posts_page(request):
+    # Check if the keys exist in the session
+    db = Database()
+    posts = db.execute(
+        """
+        SELECT user_name, date_time, content
+        FROM post
+        ORDER BY date_time DESC;
+        """,
+        (),
+        True,
+    )
+    db.close()
+    print(posts)
+    return render(request, 'signed-in/posts_page.html', {'posts':posts})
+   

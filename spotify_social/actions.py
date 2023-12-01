@@ -516,3 +516,10 @@ def create_post(request):
         return redirect('posts_page')
 
     return render(request, 'signed-in/posts_page.html', {})
+
+
+# ----------------------------------------------------------------------------
+# Loads all posts in database
+# ----------------------------------------------------------------------------
+
+
