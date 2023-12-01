@@ -218,10 +218,51 @@ def songs_page(request):
 
 
 def albums_page(request):
-    return render(request, "signed-in/albums_page.html", {})
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
+    user_name = request.session["user_id"]
+    db = Database()
+    result = db.execute(
+        """
+        SELECT * 
+        FROM user_profile
+        WHERE user_name = %s;
+        """,
+        (user_name,),
+        True,
+    )
+
+    top_artists = []
+    top_tracks = []
+    unique_tracks = []
+    seen_values = set()
+
+    load_user_profile(request)
+
+    if "top_items_user_profile" in request.session:
+        top_artists = request.session["top_items_user_profile"][0]
+        top_tracks = request.session["top_items_user_profile"][1]
+
+    for track in top_tracks:
+        value_to_check = track[10]
+
+        # Check if the value is not in the set of seen values
+        if value_to_check not in seen_values:
+            seen_values.add(value_to_check)
+            unique_tracks.append(track)
+
+    return render(
+        request,
+        "signed-in/albums_page.html",
+        {"results": result[1], "top_artists": top_artists, "top_tracks": unique_tracks},
+    )
 
 
 def artists_page(request):
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     user_name = request.session["user_id"]
     db = Database()
     result = db.execute(

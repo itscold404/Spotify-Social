@@ -35,28 +35,8 @@
                         -1px -1px 0 #000;">Spotify Social</h1>
             <a href="{%url 'login_page'%}" class="button btn btn-primary btn-lg mt-3"
                 style="background-color:#1db954; border:none">
-                Log In!
+                Login!
             </a>
         </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>stuff</th>
-                    <th>stuff</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in results %}
-                    <tr>
-                        <td>{{ row.0 }}</td>
-                        <td>{{ row.1 }}</td>
-                        <td>{{ row.3 }}</td>
-                        <td>{{ row.4 }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </body>
 </html>

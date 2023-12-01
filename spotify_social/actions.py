@@ -20,7 +20,7 @@ SEARCH_LIMIT_TRACK = 10
 SEARCH_LIMIT_ALBUM = 10
 
 # how many of each category (tracks, artists) of user's top items should be displayed in his/her profile
-PROFILE_LIMIT_ITEMS = 5
+PROFILE_LIMIT_ITEMS = 10
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
@@ -413,7 +413,11 @@ def get_display_info(matches: list):
                 track["name"],
                 track["popularity"],
                 track["duration_ms"],
-                #track["release_date"],
+                track["album"]["release_date"],
+                track["explicit"],
+                track["album"]["album_type"],
+                track["album"]["total_tracks"],
+                track["album"]["name"],
             ]
 
             track_artist = []
@@ -421,7 +425,13 @@ def get_display_info(matches: list):
                 track_artist.append(a["name"])
 
             info.append(track_artist)
+
             track_result.append(info)
+
+            if len(track["album"]["images"]) > 0:
+                info.append(track["album"]["images"][0]["url"])
+            else:
+                info.append([])
 
         display_info.append(artist_result)
         display_info.append(track_result)
@@ -434,6 +444,7 @@ def get_display_info(matches: list):
                 album["id"],
                 album["name"],
                 album["total_tracks"],
+                album["release_date"],
             ]
 
             if len(album["images"]) > 0:

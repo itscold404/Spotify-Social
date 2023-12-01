@@ -18,6 +18,22 @@
   </head>
   <br />
   <br />
+  <style>
+    /* Style for the back button */
+    #backButton {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        margin-right: 10px;  /* Add margin to the right */
+        margin-bottom: 10px; /* Add margin to the bottom */
+        background-color: #007BFF;
+        color: #fff;
+        padding: 10px;
+        text-decoration: none;
+        border-radius: 5px;
+}
+</style>
+<a href="javascript:history.back()">Back</a>
   <body>
     <div class="container-fluid">
       <div class="row justify-content-center">
@@ -39,7 +55,7 @@
             <h3 class="text-center mb-3">Please log in to your Spotify Account!</h3>
             <br />
 
-            <a type="button" class="btn btn-primary btn-block" href="{% url 'authorize' %}" style="background-color:#1db954; border:none">Log in to Spotify!</a>
+            <a type="button" class="btn btn-primary btn-block" href="{% url 'authorize' %}" style="background-color:#1db954; border:none">Log in to Spotify</a>
 
           </form>
         </div>

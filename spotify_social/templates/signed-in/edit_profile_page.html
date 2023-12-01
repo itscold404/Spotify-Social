@@ -2,6 +2,22 @@
 <body>
     <div class="container-fluid">
         <div class="row justify-content-center">
+            <style>
+                /* Style for the back button */
+                #backButton {
+                    position: fixed;
+                    top: 20px;
+                    left: 20px;
+                    margin-right: 10px;  /* Add margin to the right */
+                    margin-bottom: 10px; /* Add margin to the bottom */
+                    background-color: #007BFF;
+                    color: #fff;
+                    padding: 10px;
+                    text-decoration: none;
+                    border-radius: 5px;
+            }
+            </style>
+            <a href="javascript:history.back()">Back</a>
             <div class="col-md-4 col-sm-6 col-xs-12">
                 <form class="form-container" action="{%url 'update_user_profile'%}" method="POST">
                     {% csrf_token %}
@@ -13,7 +29,7 @@
                             type="text"
                             class="form-control"
                             value="{{ bio }}"
-                            placeholder="School Name"
+                            placeholder=""
                             name="bio"
                         />
                     </div>
@@ -24,7 +40,7 @@
                             type="text"
                             class="form-control"
                             value="{{ comp_id }}"
-                            placeholder="School Name"
+                            placeholder=""
                             name="comp_id"
                         />
                     </div>
@@ -35,7 +51,7 @@
                             type="text"
                             class="form-control"
                             value="{{ school }}"
-                            placeholder="School Name"
+                            placeholder=""
                             name="school"
                         />
                     </div>
@@ -46,7 +62,7 @@
                             type="text"
                             class="form-control"
                             value="{{ area_study }}"
-                            placeholder="School Name"
+                            placeholder=""
                             name="area_study"
                         />
                     </div>
@@ -57,14 +73,14 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Reenter New Password:</label>
+                        <label>Re-Enter New Password:</label>
                         <input type="password" class="form-control" name="re_password" />
                     </div>
 
                     <button
                         type="submit"
                         class="btn btn-primary btn-block"
-                        style="background-color: #525e9b; border: none"
+                        style="background-color: #1db954; border: none"
                     >
                         Update</button
                     ><br />

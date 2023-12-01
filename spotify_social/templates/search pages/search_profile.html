@@ -1,4 +1,22 @@
 {% extends "signed-in/base.html"%} {% block content%}
+
+<style>
+    /* Style for the back button */
+    #backButton {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        margin-right: 10px;  /* Add margin to the right */
+        margin-bottom: 10px; /* Add margin to the bottom */
+        background-color: #007BFF;
+        color: #fff;
+        padding: 10px;
+        text-decoration: none;
+        border-radius: 5px;
+}
+</style>
+<a href="javascript:history.back()">Back</a>
+
 <h2>Profiles</h2>
 {% for profile in profiles %}
 <div class="card">

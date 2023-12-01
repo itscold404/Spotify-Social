@@ -1,8 +1,64 @@
 {% extends "signed-in/base.html"%} {% block content %}
 
 <style>
+    /* Style for the back button */
+    #backButton {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        margin-right: 10px;  /* Add margin to the right */
+        margin-bottom: 10px; /* Add margin to the bottom */
+        background-color: #007BFF;
+        color: #fff;
+        padding: 10px;
+        text-decoration: none;
+        border-radius: 5px;
+}
+</style>
+<a href="javascript:history.back()">Back</a>
+
+<style>
     h1 {text-align: center;}
 </style>
 
-<h1>Albums</h1>
+<h1>TOP ALBUMS</h1>
+{% for track in top_tracks %}
+    <div class="card">
+        <div class="row">
+            <div class="col col-md-6">
+                <img src="{{track.10}}" class="img-fluid track-image" alt="Responsive image">
+            </div>
+
+            <div class="col col-md-6">
+                <input type="hidden" id="t{{track.0}}" name="trackID" value="{{track.0}}" />
+                <div class="card-body">
+                    <h2 class="my-4">{{track.8}}</h2> 
+                    <p>
+                        By:
+                        {% for a in track.9 %}
+                            {{a}}
+                            {% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    </p>
+                    <p>
+                        Release Date: {{track.4}}
+                    </p>
+                    <p>
+                        Number of Tracks: {{track.7}}
+                    </p>
+                    <p>
+                        Type: {{track.6}}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+<br></br>
+<style>
+    .track-image {
+        width: 45%; 
+        height: auto; 
+    }
+</style>
 {% endblock %}
