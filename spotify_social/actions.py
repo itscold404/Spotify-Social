@@ -501,11 +501,12 @@ def load_profile(request):
 
 def create_post(request):
     if request.method == 'POST':
-        user_name = request.POST.get('user_name')
+        user_name = request.session['user_id']
+        #user_name = request.POST.get('user_name')
         content = request.POST.get('content')
 
         # adding current date time to the list of parameters to take in
-        current_timestamp = datetime.now()
+        current_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         # trying to insert values into the posts table
         db = Database()

@@ -50,9 +50,23 @@ def authorize_spotify(request):
 
 def user_home_page(request):
     # TODO: populate user home page by passing variables into HTML below
+    #same code as posts page function
+    db = Database()
+    posts = db.execute(
+        """
+        SELECT *
+        FROM post
+        ORDER BY date_time DESC;
+        """,
+        (),
+        True,
+    )
+    db.close()
+    print(posts)
+    #get_callback(request)
+    return render(request, 'signed-in/home_page.html', {'posts':posts})
 
-    get_callback(request)
-    return render(request, "signed-in/home_page.html", {})
+
 
 
 def user_profile_page(request):
@@ -110,23 +124,7 @@ def albums_page(request):
     return render(request, "signed-in/albums_page.html", {})
 
 
-#attempts to load posts, does not work
-def posts_page(request):
-    # Check if the keys exist in the session
-    
-    db = Database()
-    posts = db.execute(
-        """
-        SELECT *
-        FROM post
-        ORDER BY date_time DESC;
-        """,
-        (),
-        True,
-    )
-    db.close()
-    print(posts)
-    return render(request, 'signed-in/posts_page.html', {'posts':posts})
+#deleted posts page
 
 # view for create posts
 
