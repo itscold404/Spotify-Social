@@ -1,3 +1,4 @@
+<!--static files include css, fonts, images, javascript code-->
 {% load static %}{% load bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
 
 <!DOCTYPE html>
@@ -18,9 +19,7 @@
         {% comment %} <base href="https://spotify-social-media.uk.r.appspot.com/"> {% endcomment %}
         {% comment %} <base href="http://127.0.0.1:8000/"> {% endcomment %}
 
-        <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #1db954;">
-            <a class="navbar-brand">Welcome!</a>
-        </nav>
+
     </head>
 
     <!--style="background-image: url('https://www.haverford.edu/sites/default/files/Office/OAR/OAR-peer-tutoring-in-action.jpg');
@@ -29,14 +28,34 @@
     <!-- use this for background image?-->
     <body>
         <div class="d-flex flex-column justify-content-center align-items-center" style="height: 100vh">
-            <h1 style="color:#000; border:none,
+            <h1 style="color:white; text-shadow: -1px 1px 2px #000,
                         1px 2px 6px #000,
                         1px -1px 0 #000,
                         -1px -1px 0 #000;">Spotify Social</h1>
             <a href="{%url 'login_page'%}" class="button btn btn-primary btn-lg mt-3"
-                style="background-color:#1db954; border:none">
-                Login!
+                style="background-color:#525E9B; border:none">
+                Log In!
             </a>
         </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>stuff</th>
+                    <th>stuff</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in results %}
+                    <tr>
+                        <td>{{ row.0 }}</td>
+                        <td>{{ row.1 }}</td>
+                        <td>{{ row.3 }}</td>
+                        <td>{{ row.4 }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </body>
 </html>

@@ -30,6 +30,48 @@ def search_for(auth_header: dict, item_type: str, name: str, limit: int):
         return json_result
 
 
+# ----------------------------------------------------------------------------
+# Searches for track given the track id
+# ----------------------------------------------------------------------------
+def find_track(auth_header: dict, id: str):
+    query_url = f"https://api.spotify.com/v1/tracks/{id}"
+    headers = auth_header
+
+    result = get(query_url, headers=headers)
+
+    loaded_content = json.loads(result.content)
+
+    if "error" in loaded_content:
+        print("ERROR:", result)
+        return "ERROR"
+    else:
+        if len(loaded_content) == 0:
+            return None
+
+        return loaded_content
+
+
+# ----------------------------------------------------------------------------
+# Searches for artist given the artist id
+# ----------------------------------------------------------------------------
+def find_artist(auth_header: dict, id: str):
+    query_url = f"https://api.spotify.com/v1/artists/{id}"
+    headers = auth_header
+
+    result = get(query_url, headers=headers)
+
+    loaded_content = json.loads(result.content)
+
+    if "error" in loaded_content:
+        print("ERROR:", result)
+        return "ERROR"
+    else:
+        if len(loaded_content) == 0:
+            return None
+
+        return loaded_content
+
+
 # TODO: songs have a preview url
 # ----------------------------------------------------------------------------
 # Search for the top tracks by an artist in the US

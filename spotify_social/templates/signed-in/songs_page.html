@@ -1,70 +1,9 @@
-{% extends "signed-in/base.html"%} {% block content %}
-
 <style>
     h1 {text-align: center;}
 </style>
 
-<style>
-    /* Style for the back button */
-    #backButton {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        margin-right: 10px;  /* Add margin to the right */
-        margin-bottom: 10px; /* Add margin to the bottom */
-        background-color: #007BFF;
-        color: #fff;
-        padding: 10px;
-        text-decoration: none;
-        border-radius: 5px;
-}
-</style>
-<a href="javascript:history.back()">Back</a>
+{% extends "signed-in/base.html"%}
 
-<h1>TOP SONGS</h1>
-{% for track in top_tracks %}
-    <div class="card">
-        <div class="row">
-            <div class="col col-md-6">
-                <img src="{{track.10}}" class="img-fluid track-image" alt="Responsive image">
-            </div>
-
-            <div class="col col-md-6">
-                <input type="hidden" id="t{{track.0}}" name="trackID" value="{{track.0}}" />
-                <div class="card-body">
-                    <h2 class="my-4">{{track.1}}</h2>
-                    <p>
-                        By:
-                        {% for a in track.9 %}
-                            {{a}}
-                            {% if not forloop.last %},{% endif %}
-                        {% endfor %}
-                    </p>
-                    <p>
-                        Release Date: {{track.4}}
-                    </p>
-                    {% if track.5 %}
-                    <p style="color: red;">
-                        Explicit
-                    </p>
-                    {% endif %}
-                    </p>
-                    <p>
-                        Duration (in milliseconds): {{track.3}}
-                    </p>
-                    <p>
-                        Popularity: {{track.2}}
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-{% endfor %}
-<br></br>
-<style>
-    .track-image {
-        width: 45%; 
-        height: auto; 
-    }
-</style>
+{% block content %}
+<h1>Welcome to Spotify Social</h1>
 {% endblock %}

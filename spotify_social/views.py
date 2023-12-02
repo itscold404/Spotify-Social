@@ -9,7 +9,11 @@ from spotify_social.actions import get_callback, load_user_profile
 # TODO: clean up landing page of user info
 # ----------------------------------------------------------------------------
 def landing_page(request):
-    return render(request, "signed-out/landing_page.html", {})
+    db = Database()
+    result = db.execute("SELECT * FROM user_profile;", (), True)
+
+    db.close()
+    return render(request, "signed-out/landing_page.html", {"results": result[1]})
 
 
 # ----------------------------------------------------------------------------
@@ -29,6 +33,8 @@ def signup_page(request):
         inputted_user_name = user_data[0]
         inputted_fname = user_data[1]
         inputted_lname = user_data[2]
+        inputted_phone = user_data[3]
+        inputted_dob = user_data[4]
 
         return render(
             request,
@@ -37,6 +43,8 @@ def signup_page(request):
                 "username": inputted_user_name,
                 "first_name": inputted_fname,
                 "last_name": inputted_lname,
+                "phone_number": inputted_phone,
+                "dob": inputted_dob,
             },
         )
 
@@ -59,12 +67,29 @@ def authorize_spotify(request):
 # TODO: could add posts here
 # ----------------------------------------------------------------------------
 def user_home_page(request):
+    # TODO: populate user home page by passing variables into HTML below
+    # same code as posts page function
+
     # check if user is signed in before proceeding
     if "user_id" in request.session:
         # TODO: populate user home page by passing variables into HTML below
 
         get_callback(request)
-        return render(request, "signed-in/home_page.html", {})
+
+        db = Database()
+        posts = db.execute(
+            """
+            SELECT *
+            FROM post
+            ORDER BY date_time DESC;
+            """,
+            (),
+            True,
+        )
+        db.close()
+        print(posts)
+
+        return render(request, "signed-in/home_page.html", {"posts": posts})
 
     else:
         return redirect(reverse("login_page"))
@@ -139,6 +164,27 @@ def search_page(request):
 
 
 # ----------------------------------------------------------------------------
+# display a longer list of user's top songs
+# ----------------------------------------------------------------------------
+def songs_page(request):
+    return render(request, "signed-in/songs_page.html", {})
+
+
+# ----------------------------------------------------------------------------
+# display a longer list of user's top albums
+# ----------------------------------------------------------------------------
+def albums_page(request):
+    return render(request, "signed-in/albums_page.html", {})
+
+
+# ----------------------------------------------------------------------------
+# display the page to where user can create their post
+# ----------------------------------------------------------------------------
+def create_posts_page(request):
+    return render(request, "signed-in/create_posts_page.html", {})
+
+
+# ----------------------------------------------------------------------------
 # display a page of all the user profiles with user names similar to
 # what the user searched
 # ----------------------------------------------------------------------------
@@ -168,84 +214,17 @@ def view_profile_page(request):
     top_artists = []
     top_tracks = []
     if "selected_profile_info" in request.session:
-        user_info, items = request.session["selected_profile_info"]
+        user_info, items, isFollowing = request.session["selected_profile_info"]
         top_artists, top_tracks = items[0], items[1]
 
+    print("currently following user", isFollowing)
     return render(
         request,
         "search pages/view_profile_page.html",
-        {"results": user_info, "top_artists": top_artists, "top_tracks": top_tracks},
-    )
-
-
-# ----------------------------------------------------------------------------
-# display a longer list of top songs
-# ----------------------------------------------------------------------------
-def songs_page(request):
-    if "user_id" not in request.session:
-        return redirect(reverse("login_page"))
-
-    top_tracks = []
-
-    load_user_profile(request)
-
-    if "top_items_user_profile" in request.session:
-        top_tracks = request.session["top_items_user_profile"][1]
-
-    return render(
-        request,
-        "signed-in/songs_page.html",
-        {"top_tracks": top_tracks},
-    )
-
-
-# ----------------------------------------------------------------------------
-# display a longer list of top albums
-# ----------------------------------------------------------------------------
-def albums_page(request):
-    if "user_id" not in request.session:
-        return redirect(reverse("login_page"))
-
-    top_tracks = []
-    unique_tracks = []
-    seen_values = set()
-
-    load_user_profile(request)
-
-    if "top_items_user_profile" in request.session:
-        top_tracks = request.session["top_items_user_profile"][1]
-
-    for track in top_tracks:
-        value_to_check = track[10]
-
-        # Check if the value is not in the set of seen values
-        if value_to_check not in seen_values:
-            seen_values.add(value_to_check)
-            unique_tracks.append(track)
-
-    return render(
-        request,
-        "signed-in/albums_page.html",
-        {"top_tracks": unique_tracks},
-    )
-
-
-# ----------------------------------------------------------------------------
-# display a longer list of top artists
-# ----------------------------------------------------------------------------
-def artists_page(request):
-    if "user_id" not in request.session:
-        return redirect(reverse("login_page"))
-
-    top_artists = []
-
-    load_user_profile(request)
-
-    if "top_items_user_profile" in request.session:
-        top_artists = request.session["top_items_user_profile"][0]
-
-    return render(
-        request,
-        "signed-in/artists_page.html",
-        {"top_artists": top_artists},
+        {
+            "results": user_info,
+            "top_artists": top_artists,
+            "top_tracks": top_tracks,
+            "isFollowing": isFollowing,
+        },
     )

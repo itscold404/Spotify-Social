@@ -5,32 +5,16 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Login Page</title>
+        <title>Spotify Social - Sign Up!</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
         <link rel="stylesheet" href="style.css" />
 
-        <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #1db954">
+        <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #525e9b">
             <a class="navbar-brand">Spotify Social</a>
         </nav>
     </head>
     <br />
     <br />
-    <style>
-        /* Style for the back button */
-        #backButton {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            margin-right: 10px;  /* Add margin to the right */
-            margin-bottom: 10px; /* Add margin to the bottom */
-            background-color: #007BFF;
-            color: #fff;
-            padding: 10px;
-            text-decoration: none;
-            border-radius: 5px;
-    }
-    </style>
-    <a href="javascript:history.back()">Back</a>
     <body>
         <div class="container-fluid">
             <div class="row justify-content-center">
@@ -74,6 +58,24 @@
                                 name="lname"
                             />
                         </div>
+                        <div class="form-group">
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ phone_number }}"
+                                placeholder="Phone Number"
+                                name="phone_number"
+                            />
+                        </div>
+                        <div class="form-group">
+                            <input
+                                type="text"
+                                class="form-control"
+                                value="{{ dob }}"
+                                placeholder="Date of Birth (mm/dd/yyyy)"
+                                name="dob"
+                            />
+                        </div>
 
                         <div class="form-group">
                             <input type="password" class="form-control" placeholder="Password" name="password" />
@@ -91,7 +93,7 @@
                         <button
                             type="submit"
                             class="btn btn-primary btn-block"
-                            style="background-color: #1db954; border: none"
+                            style="background-color: #525e9b; border: none"
                         >
                             Create Account</button
                         ><br />
@@ -102,7 +104,7 @@
 
         <div>
             <div class="form-group text-center mt-3">
-                <a href="{% url 'login_page' %}">Have an account? Log in here!</a>
+                <a href="{% url 'login_page' %}">Have an Account? Log In Here!</a>
             </div>
         </div>
 

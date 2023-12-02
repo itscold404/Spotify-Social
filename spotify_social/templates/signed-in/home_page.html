@@ -5,5 +5,31 @@
 {% extends "signed-in/base.html"%}
 
 {% block content %}
-<h1>Welcome to Spotify Social!</h1>
+<h1>Welcome to Spotify Social</h1>
+
+<div id="posts_container">
+    <p>This is a test to check if the template is rendering.</p>
+    <table>
+        <thead>
+            <tr>
+                <th>user_name</th>
+                <th>date_time</th>
+                <th>content</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+            {% for post in posts %}
+            <tr>
+                <td>{{ post.0 }}</td>
+                <td>{{ post.1 }}</td>
+                <td>{{ post.2 }}</td>
+        {% endfor %}
+        
+        </tbody>
+    </table>
+</div>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/esm/popper"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 {% endblock %}
