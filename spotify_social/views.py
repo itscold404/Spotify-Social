@@ -83,7 +83,7 @@ def user_home_page(request):
             True,
         )
         db.close()
-        print(posts)
+        # print(posts)
 
         return render(request, "signed-in/home_page.html", {"posts": posts})
 
@@ -148,15 +148,103 @@ def search_page(request):
     if "user_id" not in request.session:
         return redirect(reverse("login_page"))
 
+    user_name = request.session["user_id"]
+
+    # list of boolean to represent if user is following each artist
+    isFollowing_artist = []
+    likes_track = []  # if the user likes the track
+    track_likes = []  # the number of likes of each track
+    likes_album = []  # if the user likes the album
+    album_likes = []  # the number of likes of each album
+
     if "search_results" in request.session:
         artists = request.session["search_results"][0]
         tracks = request.session["search_results"][1]
         albums = request.session["search_results"][2]
 
+        db = Database()
+        for artist in artists:
+            artist_id = artist[0]
+            match = db.execute(
+                """
+                SELECT *
+                FROM follows_artist
+                WHERE user_name=%s and artist_id=%s;
+                """,
+                (user_name, artist_id),
+                True,
+            )
+
+            isFollowing = True if (match[0] == 1) else False
+
+            isFollowing_artist.append(isFollowing)
+
+        for track in tracks:
+            track_id = track[0]
+            match = db.execute(
+                """
+                SELECT *
+                FROM upvote_song
+                WHERE user_name=%s and song_id=%s;
+                """,
+                (user_name, track_id),
+                True,
+            )
+
+            isLiked = True if (match[0] == 1) else False
+            likes_track.append(isLiked)
+
+            likes = db.execute(
+                """
+                SELECT *
+                FROM upvote_song
+                WHERE song_id=%s;
+                """,
+                (track_id,),
+                True,
+            )
+            track_likes.append(likes[0])
+
+        for album in albums:
+            album_id = album[0]
+            match = db.execute(
+                """
+                SELECT *
+                FROM upvote_album
+                WHERE user_name=%s and album_id=%s;
+                """,
+                (user_name, album_id),
+                True,
+            )
+
+            isLiked = True if (match[0] == 1) else False
+            likes_album.append(isLiked)
+
+            likes = db.execute(
+                """
+                SELECT *
+                FROM upvote_album
+                WHERE album_id=%s;
+                """,
+                (album_id),
+                True,
+            )
+            album_likes.append(likes[0])
+
+        db.close()
+
+    artist_follow_status = zip(artists, isFollowing_artist)
+    track_with_likes = zip(tracks, likes_track, track_likes)
+    album_with_likes = zip(albums, likes_album, album_likes)
+
     return render(
         request,
         "search pages/search_items.html",
-        {"artists": artists, "tracks": tracks, "albums": albums},
+        {
+            "artist_follow_status": artist_follow_status,
+            "track_with_likes": track_with_likes,
+            "album_with_likes": album_with_likes,
+        },
     )
 
 
