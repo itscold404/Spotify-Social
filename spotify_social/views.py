@@ -71,6 +71,7 @@ def user_home_page(request):
         # TODO: populate user home page by passing variables into HTML below
 
         get_callback(request)
+        load_user_profile(request)
 
         db = Database()
         posts = db.execute(
@@ -83,7 +84,6 @@ def user_home_page(request):
             True,
         )
         db.close()
-        # print(posts)
 
         return render(request, "signed-in/home_page.html", {"posts": posts})
 
@@ -116,7 +116,7 @@ def user_profile_page(request):
     top_artists = []
     top_tracks = []
 
-    load_user_profile(request)
+    # load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_artists = request.session["top_items_user_profile"][0]
@@ -310,7 +310,7 @@ def view_profile_page(request):
 def songs_page(request):
     top_tracks = []
 
-    load_user_profile(request)
+    # load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_tracks = request.session["top_items_user_profile"][1]
@@ -332,7 +332,7 @@ def albums_page(request):
     unique_tracks = []
     seen_values = set()
 
-    load_user_profile(request)
+    # load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_tracks = request.session["top_items_user_profile"][1]
@@ -361,7 +361,7 @@ def artists_page(request):
 
     top_artists = []
 
-    load_user_profile(request)
+    # load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_artists = request.session["top_items_user_profile"][0]
