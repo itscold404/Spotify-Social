@@ -50,7 +50,7 @@ def authorize_spotify(request):
 
 def user_home_page(request):
     # TODO: populate user home page by passing variables into HTML below
-    #same code as posts page function
+    # same code as posts page function
     db = Database()
     posts = db.execute(
         """
@@ -63,10 +63,8 @@ def user_home_page(request):
     )
     db.close()
     print(posts)
-    #get_callback(request)
-    return render(request, 'signed-in/home_page.html', {'posts':posts})
 
-
+    return render(request, "signed-in/home_page.html", {"posts": posts})
 
 
 def user_profile_page(request):
@@ -117,17 +115,14 @@ def search_page(request):
         {"artists": artists, "tracks": tracks, "albums": albums},
     )
 
+
 def songs_page(request):
     return render(request, "signed-in/songs_page.html", {})
+
 
 def albums_page(request):
     return render(request, "signed-in/albums_page.html", {})
 
 
-#deleted posts page
-
-# view for create posts
-
 def create_posts_page(request):
-    return render(request, 'signed-in/create_posts_page.html', {})
-   
+    return render(request, "signed-in/create_posts_page.html", {})

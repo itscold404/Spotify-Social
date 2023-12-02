@@ -498,15 +498,13 @@ def load_profile(request):
 # ----------------------------------------------------------------------------
 # updates posts table with the info that is inputted by user
 # ----------------------------------------------------------------------------
-
 def create_post(request):
-    if request.method == 'POST':
-        user_name = request.session['user_id']
-        #user_name = request.POST.get('user_name')
-        content = request.POST.get('content')
+    if request.method == "POST":
+        user_name = request.session["user_id"]
+        content = request.POST.get("content")
 
         # adding current date time to the list of parameters to take in
-        current_timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         # trying to insert values into the posts table
         db = Database()
@@ -515,7 +513,7 @@ def create_post(request):
             INSERT INTO post (user_name, date_time, content)
             VALUES (%s, %s, %s);
             """,
-            (user_name,current_timestamp,content),
+            (user_name, current_timestamp, content),
             False,
         )
 
@@ -523,15 +521,11 @@ def create_post(request):
         messages.success(request, "Posted!")
 
         # Redirect to the same page to avoid form resubmission on page reload
-        return redirect(reverse('create_posts_page'))
+        return redirect(reverse("create_posts_page"))
 
-    return render(request, 'signed-in/create_posts_page.html', {})
-
-
+    return redirect(reverse("create_posts_page"))
 
 
 # ----------------------------------------------------------------------------
 # Loads all posts in database
 # ----------------------------------------------------------------------------
-
-
