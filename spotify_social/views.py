@@ -9,7 +9,7 @@ from spotify_social.actions import get_callback, load_user_profile
 # TODO: clean up landing page of user info
 # ----------------------------------------------------------------------------
 def landing_page(request):
-    return render(request, "signed-out/landing_page.html", {"results": result[1]})
+    return render(request, "signed-out/landing_page.html", {})
 
 
 # ----------------------------------------------------------------------------
@@ -164,6 +164,10 @@ def search_page(request):
 # display the page to where user can create their post
 # ----------------------------------------------------------------------------
 def create_posts_page(request):
+    # check if user is signed in before proceeding
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
+
     return render(request, "signed-in/create_posts_page.html", {})
 
 
@@ -200,7 +204,6 @@ def view_profile_page(request):
         user_info, items, isFollowing = request.session["selected_profile_info"]
         top_artists, top_tracks = items[0], items[1]
 
-    print("currently following user", isFollowing)
     return render(
         request,
         "search pages/view_profile_page.html",
@@ -217,31 +220,17 @@ def view_profile_page(request):
 # displays the longer list of user top songs
 # ----------------------------------------------------------------------------
 def songs_page(request):
-    user_name = request.session["user_id"]
-    db = Database()
-    result = db.execute(
-        """
-        SELECT * 
-        FROM user_profile
-        WHERE user_name = %s;
-        """,
-        (user_name,),
-        True,
-    )
-
-    top_artists = []
     top_tracks = []
 
     load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
-        top_artists = request.session["top_items_user_profile"][0]
         top_tracks = request.session["top_items_user_profile"][1]
 
     return render(
         request,
         "signed-in/songs_page.html",
-        {"results": result[1], "top_artists": top_artists, "top_tracks": top_tracks},
+        {"top_tracks": top_tracks},
     )
 
 
@@ -252,27 +241,12 @@ def albums_page(request):
     if "user_id" not in request.session:
         return redirect(reverse("login_page"))
 
-    user_name = request.session["user_id"]
-    db = Database()
-    result = db.execute(
-        """
-        SELECT * 
-        FROM user_profile
-        WHERE user_name = %s;
-        """,
-        (user_name,),
-        True,
-    )
-
-    top_artists = []
-    top_tracks = []
     unique_tracks = []
     seen_values = set()
 
     load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
-        top_artists = request.session["top_items_user_profile"][0]
         top_tracks = request.session["top_items_user_profile"][1]
 
     for track in top_tracks:
@@ -286,7 +260,7 @@ def albums_page(request):
     return render(
         request,
         "signed-in/albums_page.html",
-        {"results": result[1], "top_artists": top_artists, "top_tracks": unique_tracks},
+        {"top_tracks": unique_tracks},
     )
 
 
@@ -297,29 +271,15 @@ def artists_page(request):
     if "user_id" not in request.session:
         return redirect(reverse("login_page"))
 
-    user_name = request.session["user_id"]
-    db = Database()
-    result = db.execute(
-        """
-        SELECT * 
-        FROM user_profile
-        WHERE user_name = %s;
-        """,
-        (user_name,),
-        True,
-    )
-
     top_artists = []
-    top_tracks = []
 
     load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_artists = request.session["top_items_user_profile"][0]
-        top_tracks = request.session["top_items_user_profile"][1]
 
     return render(
         request,
         "signed-in/artists_page.html",
-        {"results": result[1], "top_artists": top_artists, "top_tracks": top_tracks},
+        {"top_artists": top_artists},
     )
