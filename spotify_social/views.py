@@ -9,17 +9,7 @@ from spotify_social.actions import get_callback, load_user_profile
 # TODO: clean up landing page of user info
 # ----------------------------------------------------------------------------
 def landing_page(request):
-    # results_django = run_query("SELECT * FROM user_profile;")
-
-    db = Database()
-    result = db.execute("SELECT * FROM user_profile;", (), True)
-
-    db.close()
-    # 'result' is the variable in HTML and results_django is the variable being
-    # passed from django
-
-    # return HttpResponse("hello world")
-    return render(request, "signed-out/landing_page.html", {"results": result[1]})
+    return render(request, "signed-out/landing_page.html", {})
 
 
 # ----------------------------------------------------------------------------
@@ -188,52 +178,34 @@ def view_profile_page(request):
     )
 
 
+# ----------------------------------------------------------------------------
+# display a longer list of top songs
+# ----------------------------------------------------------------------------
 def songs_page(request):
-    user_name = request.session["user_id"]
-    db = Database()
-    result = db.execute(
-        """
-        SELECT * 
-        FROM user_profile
-        WHERE user_name = %s;
-        """,
-        (user_name,),
-        True,
-    )
+    if "user_id" not in request.session:
+        return redirect(reverse("login_page"))
 
-    top_artists = []
     top_tracks = []
 
     load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
-        top_artists = request.session["top_items_user_profile"][0]
         top_tracks = request.session["top_items_user_profile"][1]
 
     return render(
         request,
         "signed-in/songs_page.html",
-        {"results": result[1], "top_artists": top_artists, "top_tracks": top_tracks},
+        {"top_tracks": top_tracks},
     )
 
 
+# ----------------------------------------------------------------------------
+# display a longer list of top albums
+# ----------------------------------------------------------------------------
 def albums_page(request):
     if "user_id" not in request.session:
         return redirect(reverse("login_page"))
 
-    user_name = request.session["user_id"]
-    db = Database()
-    result = db.execute(
-        """
-        SELECT * 
-        FROM user_profile
-        WHERE user_name = %s;
-        """,
-        (user_name,),
-        True,
-    )
-
-    top_artists = []
     top_tracks = []
     unique_tracks = []
     seen_values = set()
@@ -241,7 +213,6 @@ def albums_page(request):
     load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
-        top_artists = request.session["top_items_user_profile"][0]
         top_tracks = request.session["top_items_user_profile"][1]
 
     for track in top_tracks:
@@ -255,37 +226,26 @@ def albums_page(request):
     return render(
         request,
         "signed-in/albums_page.html",
-        {"results": result[1], "top_artists": top_artists, "top_tracks": unique_tracks},
+        {"top_tracks": unique_tracks},
     )
 
 
+# ----------------------------------------------------------------------------
+# display a longer list of top artists
+# ----------------------------------------------------------------------------
 def artists_page(request):
     if "user_id" not in request.session:
         return redirect(reverse("login_page"))
 
-    user_name = request.session["user_id"]
-    db = Database()
-    result = db.execute(
-        """
-        SELECT * 
-        FROM user_profile
-        WHERE user_name = %s;
-        """,
-        (user_name,),
-        True,
-    )
-
     top_artists = []
-    top_tracks = []
 
     load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_artists = request.session["top_items_user_profile"][0]
-        top_tracks = request.session["top_items_user_profile"][1]
 
     return render(
         request,
         "signed-in/artists_page.html",
-        {"results": result[1], "top_artists": top_artists, "top_tracks": top_tracks},
+        {"top_artists": top_artists},
     )
