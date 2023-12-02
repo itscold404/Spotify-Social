@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Login Page</title>
+        <title>Spotify Social</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
         <link rel="stylesheet" href="style.css" />
 
@@ -14,28 +14,43 @@
             <a class="navbar-brand" href="{% url 'user_profile_page' %}">Profile</a>
             <a class="navbar-brand" href="{% url 'songs_page' %}">Songs</a>
             <a class="navbar-brand" href="{% url 'albums_page' %}">Albums</a>
-            
             <a class="navbar-brand" href="{% url 'create_posts_page' %}">Create Posts</a>
 
-            <form id="APISearchForm" action="{%url 'search'%}" method="post">
+            <form id="APISearchForm" action="{%url 'search_items'%}" method="post">
                 {% csrf_token %}
                 <div class="input-group">
                     <div class="form-outline">
                         <input
-                            id="search-focus"
+                            id="search-items"
                             type="search"
-                            id="form1"
                             placeholder="Search Artist, Song, Albumn"
                             class="form-control"
                             name="searched-phrase"
                         />
                     </div>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-search"></i>
+                        <i class="Search Spotify"></i>
                     </button>
                 </div>
             </form>
-            <a class="navbar-brand ml-auto" href="{% url 'logout' %}">Log Out</a>
+            <form id="ProfileSearchForm" action="{%url 'search_profile'%}" method="post">
+                {% csrf_token %}
+                <div class="input-group">
+                    <div class="form-outline">
+                        <input
+                            id="search-profile"
+                            type="search"
+                            placeholder="Search Profile"
+                            class="form-control"
+                            name="searched-profile"
+                        />
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="Search Profile"></i>
+                    </button>
+                </div>
+            </form>
+            <a class="navbar-brand ml-auto" onclick="execute_logout()" href="{% url 'logout' %}">Log Out</a>
         </nav>
     </head>
     <br />
@@ -52,5 +67,13 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/esm/popper"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script>
+            function execute_logout() {
+                if (confirm("Do you want to logout?")) {
+                    window.open("https://www.spotify.com/logout/", "_blank");
+                    window.location.href = '{% url "logout" %}';
+                }
+            }
+        </script>
     </body>
 </html>

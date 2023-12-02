@@ -1,0 +1,92 @@
+{% extends "signed-in/base.html"%} {% block content%}
+<div id="interactions">
+    {% if isFollowing %}
+        <form class="form-container" action="{%url 'unfollow_profile'%}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" value={{results.0.0}} name="user_name" />
+            <button type="submit" class="btn btn-warning btn-sm">Unfollow Profile</a>
+        </form>
+    {% else %}
+        <form class="form-container" action="{%url 'follow_profile'%}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" value={{results.0.0}} name="user_name" />
+            <button type="submit" class="btn btn-primary btn-sm">Follow Profile</a>
+        </form>
+    {% endif %}
+</div>
+<div id="user_info">
+    <table>
+        <thead>
+            <tr>
+                <th>user_name</th>
+                <th>fname</th>
+                <th>lname</th>
+                <th>area_of_study</th>
+                <th>numposts</th>
+                <th>school</th>
+                <th>areastudy</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in results %}
+            <tr>
+                <td>{{ row.0 }}</td>
+                <td>{{ row.1 }}</td>
+                <td>{{ row.2 }}</td>
+                <td>{{ row.3 }}</td>
+                <td>{{ row.4 }}</td>
+                <td>{{ row.5 }}</td>
+                <td>{{ row.6 }}</td>
+                <td>{{ row.7 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<h2>TOP ARTISTS</h2>
+{% for artist in top_artists %}
+    <div class="card">
+        <div class="row">
+            <div class="col col-md-6">
+                <img src="{{artist.3}}" class="img-fluid artist-image" alt="Responsive image">
+            </div>
+
+            <div class="col col-md-6">
+                <input type="hidden" id="a{{artist.0}}" name="artistID" value="{{artist.0}}" />
+                <div class="card-body">
+                    {{artist.1}}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+<br></br>
+<h2>TOP SONGS</h2>
+{% for track in top_tracks %}
+    <div class="card">
+        <div class="row">
+            <div class="col col-md-6">
+                <input type="hidden" id="t{{track.0}}" name="trackID" value="{{track.0}}" />
+                <div class="card-body">
+                    {{track.1}} by:
+                    {% for a in track.2 %}
+                        {{a}}, 
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+<br></br>
+<style>
+    .artist-image {
+        width: 20%; 
+        height: auto; 
+    }
+    .album-image {
+        width: 20%; 
+        height: auto; 
+    }
+</style>
+{% endblock %}

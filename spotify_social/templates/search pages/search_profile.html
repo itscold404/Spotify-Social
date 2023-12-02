@@ -1,0 +1,24 @@
+{% extends "signed-in/base.html"%} {% block content%}
+<h2>Profiles</h2>
+{% for profile in profiles %}
+<div class="card">
+    <div class="row">
+        <div class="col col-md-6">
+            <div class="card-body">User Name: {{profile.0}}</div>
+            <div class="card-body">Name: {{profile.3}}</div>
+        </div>
+        <div class="col col-md-6">
+            <div class="card-body">School: {{profile.5}}</div>
+            <div class="card-body">Area of Study: {{profile.6}}</div>
+        </div>
+    </div>
+    <div class="col col-md-6">
+        <form class="form-container" action="{%url 'view_user_profile'%}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" value={{profile.0}} name="user_name" />
+            <button type="submit" class="btn btn-primary btn-sm">View Profile</a>
+        </form>
+    </div>
+    <br />
+</div>
+{% endfor %} {% endblock %}
