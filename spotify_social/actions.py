@@ -11,17 +11,16 @@ import urllib.parse
 import secrets
 import os
 import base64
-from datetime import datetime
 
 load_dotenv()
 
 # how many results the API should produce for the respective category
-SEARCH_LIMIT_ARTIST = 6
-SEARCH_LIMIT_TRACK = 6
-SEARCH_LIMIT_ALBUM = 6
+SEARCH_LIMIT_ARTIST = 5
+SEARCH_LIMIT_TRACK = 10
+SEARCH_LIMIT_ALBUM = 10
 
 # how many of each category (tracks, artists) of user's top items should be displayed in his/her profile
-PROFILE_LIMIT_ITEMS = 5
+PROFILE_LIMIT_ITEMS = 10
 
 CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
 CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
@@ -87,8 +86,6 @@ def create_account(request):
         inputted_user_name = request.POST.get("user_name")
         inputted_fname = request.POST.get("fname")
         inputted_lname = request.POST.get("lname")
-        inputted_phone = request.POST.get("phone_number")
-        inputted_dob = request.POST.get("dob")
         inputted_password = request.POST.get("password")
         inputted_re_password = request.POST.get("re_password")
 
@@ -115,16 +112,10 @@ def create_account(request):
 
                 db.execute(
                     """
-                    INSERT INTO user_profile (user_name, first_name, last_name, phone_number, date_of_birth)
-                    VALUES (%s, %s, %s, %s, %s);
+                    INSERT INTO user_profile (user_name, first_name, last_name)
+                    VALUES (%s, %s, %s);
                     """,
-                    (
-                        inputted_user_name,
-                        inputted_fname,
-                        inputted_lname,
-                        inputted_phone,
-                        inputted_dob,
-                    ),
+                    (inputted_user_name, inputted_fname, inputted_lname),
                     False,
                 )
 
@@ -155,8 +146,6 @@ def create_account(request):
                     inputted_user_name,
                     inputted_fname,
                     inputted_lname,
-                    inputted_phone,
-                    inputted_dob,
                 ]
                 return redirect(reverse("signup_page"))
         else:
@@ -167,8 +156,6 @@ def create_account(request):
                 inputted_user_name,
                 inputted_fname,
                 inputted_lname,
-                inputted_phone,
-                inputted_dob,
             ]
             return redirect(reverse("signup_page"))
 
@@ -271,7 +258,7 @@ def authorize(request):
     query_string = urllib.parse.urlencode(query_parameters)
     spotify_auth_url = f"https://accounts.spotify.com/authorize?{query_string}"
 
-    messages.success(request, "Spotify login successful!")
+    messages.success(request, "spotify login successful!")
     return HttpResponseRedirect(spotify_auth_url)
 
 
@@ -407,6 +394,8 @@ def get_display_info(matches: list):
                 artist["id"],
                 artist["name"],
                 artist["followers"]["total"],
+                artist["popularity"],
+                artist["genres"],
             ]
 
             if len(artist["images"]) > 0:
@@ -422,6 +411,13 @@ def get_display_info(matches: list):
             info = [
                 track["id"],
                 track["name"],
+                track["popularity"],
+                track["duration_ms"],
+                track["album"]["release_date"],
+                track["explicit"],
+                track["album"]["album_type"],
+                track["album"]["total_tracks"],
+                track["album"]["name"],
             ]
 
             track_artist = []
@@ -431,6 +427,11 @@ def get_display_info(matches: list):
             info.append(track_artist)
 
             track_result.append(info)
+
+            if len(track["album"]["images"]) > 0:
+                info.append(track["album"]["images"][0]["url"])
+            else:
+                info.append([])
 
         display_info.append(artist_result)
         display_info.append(track_result)
@@ -443,6 +444,7 @@ def get_display_info(matches: list):
                 album["id"],
                 album["name"],
                 album["total_tracks"],
+                album["release_date"],
             ]
 
             if len(album["images"]) > 0:
@@ -546,7 +548,7 @@ def search_profile(request):
     result = db.execute(
         """
         SELECT * 
-        FROM protected_profile
+        FROM user_profile
         WHERE user_name LIKE %s;
         """,
         (pattern,),
@@ -613,24 +615,12 @@ def view_user_profile(request):
     result = db.execute(
         """
         SELECT *
-        FROM protected_profile
+        FROM user_profile
         WHERE user_name=%s;
         """,
         (user_name,),
         True,
     )
-
-    follow = db.execute(
-        """
-        SELECT *
-        FROM follows_profile
-        WHERE user_name_follower=%s and user_name_following=%s;
-        """,
-        (request.session["user_id"], user_name),
-        True,
-    )
-
-    isFollowing = True if (follow[0] == 1) else False
 
     # if the user_name exists in the database
     if result[0] == 1:
@@ -676,143 +666,12 @@ def view_user_profile(request):
         for t in track_id_list:
             tracks.append(find_track(auth_header, t))
 
-        # stores user info, top items, and if current user is following this profile
         request.session["selected_profile_info"] = [
             result[1],
             get_display_info([artists, tracks]),
-            isFollowing,
         ]
 
     else:
         db.close()
 
     return redirect(reverse("view_profile_page"))
-
-
-# ----------------------------------------------------------------------------
-# follow selected user's profile so that you can see their posts
-# ----------------------------------------------------------------------------
-def follow_profile(request):
-    if request.method == "POST":
-        follow_user = request.POST.get("user_name")
-        user_name = request.session["user_id"]
-        db = Database()
-
-        result = db.execute(
-            """
-            SELECT * 
-            FROM follows_profile 
-            WHERE user_name_follower=%s and user_name_following=%s;
-            """,
-            (
-                user_name,
-                follow_user,
-            ),
-            True,
-        )
-
-        # the current user is not following this profile yet
-        if result[0] == 0:
-            db.execute(
-                """
-                INSERT INTO follows_profile (user_name_follower, user_name_following)
-                VALUES (%s, %s);
-                """,
-                (
-                    user_name,
-                    follow_user,
-                ),
-                False,
-            )
-
-            db.update_db_and_close()
-            messages.success(request, f"Followed user {follow_user}")
-
-        else:
-            db.close()
-            messages.warning(request, f"Already following {follow_user}")
-
-    return redirect(reverse("user_home_page"))
-
-
-# ----------------------------------------------------------------------------
-# unfollow selected user's profile if already following the profile
-# ----------------------------------------------------------------------------
-def unfollow_profile(request):
-    if request.method == "POST":
-        follow_user = request.POST.get("user_name")
-        user_name = request.session["user_id"]
-        db = Database()
-
-        result = db.execute(
-            """
-            SELECT * 
-            FROM follows_profile 
-            WHERE user_name_follower=%s and user_name_following=%s;
-            """,
-            (
-                user_name,
-                follow_user,
-            ),
-            True,
-        )
-
-        # the current user is following this profile
-        if result[0] == 1:
-            db.execute(
-                """
-                DELETE FROM follows_profile 
-                WHERE user_name_follower=%s and user_name_following=%s;
-                """,
-                (
-                    user_name,
-                    follow_user,
-                ),
-                True,
-            )
-
-            db.update_db_and_close()
-            messages.success(request, f"Unfollowed user {follow_user}")
-        else:
-            db.close()
-            messages.warning(
-                request, f"Cannot unfollow because not following user {follow_user}"
-            )
-
-    return redirect(reverse("user_home_page"))
-
-
-# ----------------------------------------------------------------------------
-# updates posts table with the info that is inputted by user
-# ----------------------------------------------------------------------------
-def create_post(request):
-    if request.method == "POST":
-        user_name = request.session["user_id"]
-        content = request.POST.get("content")
-
-        # adding current date time to the list of parameters to take in
-        current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-        # trying to insert values into the posts table
-        db = Database()
-        db.execute(
-            """
-            INSERT INTO post (user_name, date_time, content)
-            VALUES (%s, %s, %s);
-            """,
-            (user_name, current_timestamp, content),
-            False,
-        )
-
-        db.update_db_and_close()
-        messages.success(request, "Posted!")
-
-        # Redirect to the same page to avoid form resubmission on page reload
-        return redirect(reverse("create_posts_page"))
-
-    return redirect(reverse("create_posts_page"))
-
-
-# ----------------------------------------------------------------------------
-# Loads all posts in database
-# ----------------------------------------------------------------------------

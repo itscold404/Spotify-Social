@@ -21,39 +21,30 @@
 </style>
 <a href="javascript:history.back()">Back</a>
 
-<h1>TOP SONGS</h1>
-{% for track in top_tracks %}
+<h1>TOP ARTISTS</h1>
+{% for artist in top_artists %}
     <div class="card">
         <div class="row">
             <div class="col col-md-6">
-                <img src="{{track.10}}" class="img-fluid track-image" alt="Responsive image">
+                <img src="{{artist.5}}" class="img-fluid artist-image" alt="Responsive image">
             </div>
 
             <div class="col col-md-6">
-                <input type="hidden" id="t{{track.0}}" name="trackID" value="{{track.0}}" />
+                <input type="hidden" id="a{{artist.0}}" name="artistID" value="{{artist.0}}" />
                 <div class="card-body">
-                    <h2 class="my-4">{{track.1}}</h2>
+                    <h2 class="my-4">{{artist.1}}</h2>
                     <p>
-                        By:
-                        {% for a in track.9 %}
+                        Followers: {{artist.2}}
+                    </p>
+                    <p>
+                        Genre(s):
+                        {% for a in artist.4 %}
                             {{a}}
                             {% if not forloop.last %},{% endif %}
                         {% endfor %}
                     </p>
                     <p>
-                        Release Date: {{track.4}}
-                    </p>
-                    {% if track.5 %}
-                    <p style="color: red;">
-                        Explicit
-                    </p>
-                    {% endif %}
-                    </p>
-                    <p>
-                        Duration (in milliseconds): {{track.3}}
-                    </p>
-                    <p>
-                        Popularity: {{track.2}}
+                        Popularity: {{artist.3}}
                     </p>
                 </div>
             </div>
@@ -62,8 +53,8 @@
 {% endfor %}
 <br></br>
 <style>
-    .track-image {
-        width: 45%; 
+    .artist-image {
+        width: 35%; 
         height: auto; 
     }
 </style>

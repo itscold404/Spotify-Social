@@ -1,18 +1,37 @@
 {% extends "signed-in/base.html"%}
 
 {% block content %}
+    <style>
+        /* Style for the back button */
+        #backButton {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            margin-right: 10px;  /* Add margin to the right */
+            margin-bottom: 10px; /* Add margin to the bottom */
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px;
+            text-decoration: none;
+            border-radius: 5px;
+    }
+    </style>
+<a href="javascript:history.back()">Back</a>
     <h2>ARTISTS</h2>
     {% for artist in artists %}
         <div class="card">
             <div class="row">
                 <div class="col col-md-6">
-                    <img src="{{artist.3}}" class="img-fluid artist-image" alt="Responsive image">
+                    <img src="{{artist.5}}" class="img-fluid artist-image" alt="Responsive image">
                 </div>
 
                 <div class="col col-md-6">
                     <input type="hidden" id="a{{artist.0}}" name="artistID" value="{{artist.0}}" />
                     <div class="card-body">
-                        {{artist.1}} -- Followers: {{artist.2}}
+                        <h3 class="my-4">{{artist.1}}</h3>
+                        <p>
+                            Followers: {{artist.2}}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -24,12 +43,24 @@
         <div class="card">
             <div class="row">
                 <div class="col col-md-6">
+                    <img src="{{track.10}}" class="img-fluid track-image" alt="Responsive image">
+                </div>
+                <div class="col col-md-6">
                     <input type="hidden" id="t{{track.0}}" name="trackID" value="{{track.0}}" />
                     <div class="card-body">
-                        {{track.1}} by:
-                        {% for a in track.2 %}
-                            {{a}}, 
-                        {% endfor %}
+                        <h5 class="my-4">{{track.1}}</h5>
+                        <p>
+                            By:
+                            {% for a in track.9 %}
+                                {{a}}
+                                {% if not forloop.last %},{% endif %}
+                            {% endfor %}
+                        </p>
+                        {% if track.5 %}
+                        <p style="color: red;">
+                            Explicit
+                        </p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -41,17 +72,20 @@
         <div class="card">
             <div class="row">
                 <div class="col col-md-6">
-                    <img src="{{album.3}}" class="img-fluid album-image" alt="Responsive image">
+                    <img src="{{album.4}}" class="img-fluid album-image" alt="Responsive image">
                 </div>
 
                 <div class="col col-md-6">
                     <input type="hidden" id="al{{album.0}}" name="albumID" value="{{album.0}}" />
                     <div class="card-body">
-                        {{track.1}} by:
-                        {% for a in album.4 %}
-                            {{a}}, 
-                        {% endfor %}
-                        Number of tracks: {{album.2}}
+                        <h7 class="my-4">{{album.1}}</h7> 
+                        <p>
+                            By:
+                            {% for a in album.5 %}
+                                {{a}}
+                                {% if not forloop.last %},{% endif %}
+                            {% endfor %}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -60,8 +94,12 @@
 
     <style>
         .artist-image {
-            width: 20%; 
+            width: 25%; 
             height: auto; 
+        }
+        .track-image {
+        width: 30%; 
+        height: auto; 
         }
         .album-image {
             width: 20%; 
