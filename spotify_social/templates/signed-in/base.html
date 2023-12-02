@@ -9,10 +9,12 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
         <link rel="stylesheet" href="style.css" />
 
-        <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #525e9b">
+        <nav class="navbar navbar-expand-md navbar-dark" style="background-color: #1db954">
             <a class="navbar-brand" href="{% url 'user_home_page' %}">Spotify Social</a>
-            <a class="navbar-brand" onclick="execute_logout()" href="{% url 'logout' %}">Logout</a>
             <a class="navbar-brand" href="{% url 'user_profile_page' %}">Profile</a>
+            <a class="navbar-brand" href="{% url 'songs_page' %}">Songs</a>
+            <a class="navbar-brand" href="{% url 'albums_page' %}">Albums</a>
+            <a class="navbar-brand" href="{% url 'create_posts_page' %}">Create Posts</a>
 
             <form id="APISearchForm" action="{%url 'search_items'%}" method="post">
                 {% csrf_token %}
@@ -48,6 +50,7 @@
                     </button>
                 </div>
             </form>
+            <a class="navbar-brand ml-auto" onclick="execute_logout()" href="{% url 'logout' %}">Log Out</a>
         </nav>
     </head>
     <br />

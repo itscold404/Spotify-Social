@@ -14,10 +14,14 @@ urlpatterns = [
     ),  # view the profile of diff user
     path("edit_profile/", views.user_edit_profile_page, name="user_edit_profile_page"),
     path("search_page/", views.search_page, name="search_page"),  # the spotify items
+    path("songs_page/", views.songs_page, name="songs_page"),
+    path("albums_page/", views.albums_page, name="albums_page"),
+    path("create_posts_page/", views.create_posts_page, name="create_posts_page"),
     path("search_profile_page/", views.search_profile_page, name="search_profile_page"),
     path("check_credentials/", actions.check_credentials, name="check_credentials"),
     path("create_account/", actions.create_account, name="create_account"),
     path("update_profile/", actions.update_profile, name="update_user_profile"),
+    path("create_post/", actions.create_post, name="create_post"),
     path("logout/", actions.logout, name="logout"),
     path("delete_profile/", actions.delete_profile, name="delete_user_profile"),
     path("search_items/", actions.search_items, name="search_items"),

@@ -67,12 +67,29 @@ def authorize_spotify(request):
 # TODO: could add posts here
 # ----------------------------------------------------------------------------
 def user_home_page(request):
+    # TODO: populate user home page by passing variables into HTML below
+    # same code as posts page function
+
     # check if user is signed in before proceeding
     if "user_id" in request.session:
         # TODO: populate user home page by passing variables into HTML below
 
         get_callback(request)
-        return render(request, "signed-in/home_page.html", {})
+
+        db = Database()
+        posts = db.execute(
+            """
+            SELECT *
+            FROM post
+            ORDER BY date_time DESC;
+            """,
+            (),
+            True,
+        )
+        db.close()
+        print(posts)
+
+        return render(request, "signed-in/home_page.html", {"posts": posts})
 
     else:
         return redirect(reverse("login_page"))
@@ -144,6 +161,27 @@ def search_page(request):
         "search pages/search_items.html",
         {"artists": artists, "tracks": tracks, "albums": albums},
     )
+
+
+# ----------------------------------------------------------------------------
+# display a longer list of user's top songs
+# ----------------------------------------------------------------------------
+def songs_page(request):
+    return render(request, "signed-in/songs_page.html", {})
+
+
+# ----------------------------------------------------------------------------
+# display a longer list of user's top albums
+# ----------------------------------------------------------------------------
+def albums_page(request):
+    return render(request, "signed-in/albums_page.html", {})
+
+
+# ----------------------------------------------------------------------------
+# display the page to where user can create their post
+# ----------------------------------------------------------------------------
+def create_posts_page(request):
+    return render(request, "signed-in/create_posts_page.html", {})
 
 
 # ----------------------------------------------------------------------------
