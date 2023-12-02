@@ -83,7 +83,7 @@ def user_home_page(request):
             True,
         )
         db.close()
-        print(posts)
+        # print(posts)
 
         return render(request, "signed-in/home_page.html", {"posts": posts})
 
@@ -148,15 +148,44 @@ def search_page(request):
     if "user_id" not in request.session:
         return redirect(reverse("login_page"))
 
+    user_name = request.session["user_id"]
+    isFollowing_artist = []
+
     if "search_results" in request.session:
         artists = request.session["search_results"][0]
         tracks = request.session["search_results"][1]
         albums = request.session["search_results"][2]
 
+        # create a list of boolean to represent if user is following each artist
+        db = Database()
+        for artist in artists:
+            artist_id = artist[0]
+            match = db.execute(
+                """
+                SELECT *
+                FROM follows_artist
+                WHERE user_name=%s and artist_id=%s
+                """,
+                (user_name, artist_id),
+                True,
+            )
+
+            isFollowing = True if (match[0] == 1) else False
+
+            isFollowing_artist.append(isFollowing)
+
+        db.close()
+
+    artist_follow_status = zip(artists, isFollowing_artist)
+    print(isFollowing_artist)
     return render(
         request,
         "search pages/search_items.html",
-        {"artists": artists, "tracks": tracks, "albums": albums},
+        {
+            "artist_follow_status": artist_follow_status,
+            "tracks": tracks,
+            "albums": albums,
+        },
     )
 
 
