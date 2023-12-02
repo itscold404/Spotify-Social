@@ -35,4 +35,6 @@ urlpatterns = [
     path("unfollow_profile/", actions.unfollow_profile, name="unfollow_profile"),
     path("follow_artist/", actions.follow_artist, name="follow_artist"),
     path("unfollow_artist/", actions.unfollow_artist, name="unfollow_artist"),
+    path("like/", actions.like_track_album, name="like"),
+    path("unlike/", actions.unlike_track_album, name="unlike"),
 ]

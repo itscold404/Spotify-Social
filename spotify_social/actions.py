@@ -910,3 +910,139 @@ def unfollow_artist(request):
             db.close()
 
     return redirect(reverse("search_page"))
+
+
+# ----------------------------------------------------------------------------
+# like a track or album
+# ----------------------------------------------------------------------------
+def like_track_album(request):
+    if request.method == "POST":
+        user_name = request.session["user_id"]
+        item_type = request.POST.get("type")
+        current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        if item_type == "track":
+            confirmation_query = """
+                                SELECT * 
+                                FROM upvote_song 
+                                WHERE user_name=%s and song_id=%s;
+                                """
+
+            like_query = """
+                        INSERT INTO upvote_song (user_name, song_id, date_time)
+                        VALUES (%s, %s, %s);
+                        """
+
+            item_id = request.POST.get("trackID")
+
+        elif item_type == "album":
+            confirmation_query = """
+                                SELECT * 
+                                FROM upvote_album 
+                                WHERE user_name=%s and album_id=%s;
+                                """
+
+            like_query = """
+                        INSERT INTO upvote_album (user_name, album_id, date_time)
+                        VALUES (%s, %s, %s);
+                        """
+
+            item_id = request.POST.get("albumID")
+
+        item_id = item_id[:-1]
+        print("id is", item_id)
+        db = Database()
+        result = db.execute(
+            confirmation_query,
+            (
+                user_name,
+                item_id,
+            ),
+            True,
+        )
+
+        # the current user is has not liked this item
+        if result[0] == 0:
+            db.execute(
+                like_query,
+                (
+                    user_name,
+                    item_id,
+                    current_timestamp,
+                ),
+                False,
+            )
+
+            db.update_db_and_close()
+        else:
+            db.close()
+
+    return redirect(reverse("search_page"))
+
+
+# ----------------------------------------------------------------------------
+# unlike a track or album
+# ----------------------------------------------------------------------------
+def unlike_track_album(request):
+    if request.method == "POST":
+        user_name = request.session["user_id"]
+        item_type = request.POST.get("type")
+        current_timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        if item_type == "track":
+            confirmation_query = """
+                                SELECT * 
+                                FROM upvote_song 
+                                WHERE user_name=%s and song_id=%s;
+                                """
+
+            unlike_query = """
+                            DELETE FROM upvote_song 
+                            WHERE user_name=%s and song_id=%s;
+                            """
+
+            item_id = request.POST.get("trackID")
+
+        elif item_type == "album":
+            confirmation_query = """
+                                SELECT * 
+                                FROM upvote_album 
+                                WHERE user_name=%s and album_id=%s;
+                                """
+
+            unlike_query = """
+                            DELETE FROM upvote_album 
+                            WHERE user_name=%s and album_id=%s;
+                            """
+
+            item_id = request.POST.get("albumID")
+
+        print("before change", item_id)
+        item_id = item_id[:-1]
+        print("id is", item_id)
+        db = Database()
+        result = db.execute(
+            confirmation_query,
+            (
+                user_name,
+                item_id,
+            ),
+            True,
+        )
+
+        # the current user is liked this item
+        if result[0] == 1:
+            db.execute(
+                unlike_query,
+                (
+                    user_name,
+                    item_id,
+                ),
+                False,
+            )
+
+            db.update_db_and_close()
+        else:
+            db.close()
+
+    return redirect(reverse("search_page"))
