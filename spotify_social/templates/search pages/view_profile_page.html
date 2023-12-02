@@ -17,7 +17,21 @@
 </style>
 <a href="javascript:history.back()">Back</a>
 <br></br>
-
+<div id="interactions">
+    {% if isFollowing %}
+        <form class="form-container" action="{%url 'unfollow_profile'%}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" value={{results.0.0}} name="user_name" />
+            <button type="submit" class="btn btn-warning btn-sm">Unfollow Profile</a>
+        </form>
+    {% else %}
+        <form class="form-container" action="{%url 'follow_profile'%}" method="POST">
+            {% csrf_token %}
+            <input type="hidden" value={{results.0.0}} name="user_name" />
+            <button type="submit" class="btn btn-primary btn-sm">Follow Profile</a>
+        </form>
+    {% endif %}
+</div>
 <div id="user_info">
     {% for row in results %}
         <h2>{{row.0}}</h2>
@@ -28,11 +42,10 @@
             <p><strong>Number of Posts:</strong> {{row.4}}</p>
     {% endfor %}
 </div>
-<a type="button" class="btn btn-primary" href="{% url 'user_edit_profile_page' %}">Edit Profile</a>
-<a type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteConfirm">Delete Account</a>
+
 <br></br>
 
-<h1 class="display-6">TOP 3 ARTISTS</h1>
+<h2 class="display-6">TOP 3 ARTISTS</h2>
 <div class="card-group">
     {% for artist in top_artists %}
         {% if forloop.counter <= 3 %}
@@ -47,7 +60,7 @@
     {% endfor %}
 </div>
 <br></br>
-<h3 class="display-6">TOP 3 SONGS</h3>
+<h2 class="display-6">TOP 3 SONGS</h2>
 <div class="card-group">
     {% for track in top_tracks %}
         {% if forloop.counter <= 3 %}

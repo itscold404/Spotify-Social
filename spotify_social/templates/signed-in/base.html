@@ -5,7 +5,7 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Login Page</title>
+        <title>Spotify Social</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
         <link rel="stylesheet" href="style.css" />
 
@@ -15,6 +15,7 @@
             <a class="navbar-brand" href="{% url 'artists_page' %}">Top Artists</a>
             <a class="navbar-brand" href="{% url 'albums_page' %}">Top Albums</a>
             <a class="navbar-brand" href="{% url 'songs_page' %}">Top Songs</a>
+            <a class="navbar-brand" href="{% url 'create_posts_page' %}">Create Posts</a>
 
             <form id="APISearchForm" action="{%url 'search_items'%}" method="post">
                 {% csrf_token %}
@@ -50,7 +51,7 @@
                     </button>
                 </div>
             </form>
-            <a class="navbar-brand ml-auto" onclick="execute_logout()">Logout</a>
+            <a class="navbar-brand ml-auto" onclick="execute_logout()" href="{% url 'logout' %}">Log Out</a>
         </nav>
     </head>
     <br />

@@ -9,16 +9,6 @@ from spotify_social.actions import get_callback, load_user_profile
 # TODO: clean up landing page of user info
 # ----------------------------------------------------------------------------
 def landing_page(request):
-    # results_django = run_query("SELECT * FROM user_profile;")
-
-    db = Database()
-    result = db.execute("SELECT * FROM user_profile;", (), True)
-
-    db.close()
-    # 'result' is the variable in HTML and results_django is the variable being
-    # passed from django
-
-    # return HttpResponse("hello world")
     return render(request, "signed-out/landing_page.html", {"results": result[1]})
 
 
@@ -39,6 +29,8 @@ def signup_page(request):
         inputted_user_name = user_data[0]
         inputted_fname = user_data[1]
         inputted_lname = user_data[2]
+        inputted_phone = user_data[3]
+        inputted_dob = user_data[4]
 
         return render(
             request,
@@ -47,6 +39,8 @@ def signup_page(request):
                 "username": inputted_user_name,
                 "first_name": inputted_fname,
                 "last_name": inputted_lname,
+                "phone_number": inputted_phone,
+                "dob": inputted_dob,
             },
         )
 
@@ -69,12 +63,29 @@ def authorize_spotify(request):
 # TODO: could add posts here
 # ----------------------------------------------------------------------------
 def user_home_page(request):
+    # TODO: populate user home page by passing variables into HTML below
+    # same code as posts page function
+
     # check if user is signed in before proceeding
     if "user_id" in request.session:
         # TODO: populate user home page by passing variables into HTML below
 
         get_callback(request)
-        return render(request, "signed-in/home_page.html", {})
+
+        db = Database()
+        posts = db.execute(
+            """
+            SELECT *
+            FROM post
+            ORDER BY date_time DESC;
+            """,
+            (),
+            True,
+        )
+        db.close()
+        print(posts)
+
+        return render(request, "signed-in/home_page.html", {"posts": posts})
 
     else:
         return redirect(reverse("login_page"))
@@ -100,6 +111,7 @@ def user_profile_page(request):
         (user_name,),
         True,
     )
+    db.close()
 
     top_artists = []
     top_tracks = []
@@ -149,8 +161,15 @@ def search_page(request):
 
 
 # ----------------------------------------------------------------------------
-# display a page of all the user profiles with user names similar to
-# what the user searched
+# display the page to where user can create their post
+# ----------------------------------------------------------------------------
+def create_posts_page(request):
+    return render(request, "signed-in/create_posts_page.html", {})
+
+
+# ----------------------------------------------------------------------------
+# display a page with a list of user profiles that have similar user names
+# to the user name searched by the user
 # ----------------------------------------------------------------------------
 def search_profile_page(request):
     # check if user is signed in before proceeding
@@ -178,16 +197,25 @@ def view_profile_page(request):
     top_artists = []
     top_tracks = []
     if "selected_profile_info" in request.session:
-        user_info, items = request.session["selected_profile_info"]
+        user_info, items, isFollowing = request.session["selected_profile_info"]
         top_artists, top_tracks = items[0], items[1]
 
+    print("currently following user", isFollowing)
     return render(
         request,
         "search pages/view_profile_page.html",
-        {"results": user_info, "top_artists": top_artists, "top_tracks": top_tracks},
+        {
+            "results": user_info,
+            "top_artists": top_artists,
+            "top_tracks": top_tracks,
+            "isFollowing": isFollowing,
+        },
     )
 
 
+# ----------------------------------------------------------------------------
+# displays the longer list of user top songs
+# ----------------------------------------------------------------------------
 def songs_page(request):
     user_name = request.session["user_id"]
     db = Database()
@@ -217,6 +245,9 @@ def songs_page(request):
     )
 
 
+# ----------------------------------------------------------------------------
+# displays the longer list of user top albums
+# ----------------------------------------------------------------------------
 def albums_page(request):
     if "user_id" not in request.session:
         return redirect(reverse("login_page"))
@@ -259,6 +290,9 @@ def albums_page(request):
     )
 
 
+# ----------------------------------------------------------------------------
+# displays the longer list of user top artists
+# ----------------------------------------------------------------------------
 def artists_page(request):
     if "user_id" not in request.session:
         return redirect(reverse("login_page"))
