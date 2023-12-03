@@ -1,158 +1,159 @@
-{% extends "signed-in/base.html"%}
+{% extends "signed-in/base.html"%} {% block content %}
 
-{% block content %}
-    <style>
-        /* Style for the back button */
-        #backButton {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            margin-right: 10px;  /* Add margin to the right */
-            margin-bottom: 10px; /* Add margin to the bottom */
-            background-color: #007BFF;
-            color: #fff;
-            padding: 10px;
-            text-decoration: none;
-            border-radius: 5px;
-    }
-    </style>
+<style>
+    /* Style for the back button */
+    #backButton {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        margin-right: 10px;  /* Add margin to the right */
+        margin-bottom: 10px; /* Add margin to the bottom */
+        background-color: #007BFF;
+        color: #fff;
+        padding: 10px;
+        text-decoration: none;
+        border-radius: 5px;
+}
+</style>
+
 <a href="javascript:history.back()">Back</a>
-    <h2>ARTISTS</h2>
-    {% for artist, isFollowing in artist_follow_status %}
-        <div class="card">
-            <div class="row">
-                <div class="col col-md-6">
-                    <img src="{{artist.5}}" class="img-fluid artist-image" alt="Responsive image">
-                </div>
 
-                <div class="col col-md-6">
-                    <div class="card-body">
-                        <h3 class="my-4">{{artist.1}}</h3>
-                        <p>
-                            Followers: {{artist.2}}
-                        </p>
-                    </div>
-                </div>
+<h2>ARTISTS</h2>
+{% for artist, isFollowing in artist_follow_status %}
+    <div class="card">
+        <div class="row">
+            <div class="col col-md-6">
+                <img src="{{artist.5}}" class="img-fluid artist-image" alt="Responsive image">
             </div>
-            <div id="artist-interactions">
-                {% if isFollowing %}
-                    <form class="form-container" action="{%url 'unfollow_artist'%}" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="artistID" value={{artist.0}} />
-                        <button type="submit" class="btn btn-warning btn-sm">Unfollow Profile</a>
-                    </form>
-                {% else %}
-                    <form class="form-container" action="{%url 'follow_artist'%}" method="POST">
-                        {% csrf_token %}
-                        <input type="hidden" name="artistID" value={{artist.0}} />
-                        <button type="submit" class="btn btn-primary btn-sm">Follow Profile</a>
-                    </form>
-                {% endif %}
-            </div>
-        </div>
-    {% endfor %}
-    <br></br>
-    <h2>SONGS</h2>
-    {% for track, liked, number_likes in track_with_likes %}
-        <div class="card">
-            <div class="row">
-                <div class="col col-md-6">
-                    <img src="{{track.10}}" class="img-fluid track-image" alt="Responsive image">
-                </div>
-                <div class="col col-md-6">
-                    <div class="card-body">
-                        <h5 class="my-4">{{track.1}}</h5>
-                        <p>
-                            By:
-                            {% for a in track.9 %}
-                                {{a}}
-                                {% if not forloop.last %},{% endif %}
-                            {% endfor %}
-                        </p>
-                        {% if track.5 %}
-                        <p style="color: red;">
-                            Explicit
-                        </p>
+
+            <div class="col col-md-6">
+                <div class="card-body">
+                    <h3 class="my-4">{{artist.1}}</h3>
+                    <p>
+                        Followers: {{artist.2}}
+                    </p>
+                    <div id="artist-interactions">
+                        {% if isFollowing %}
+                            <form class="form-container" action="{% url 'unfollow_artist'%}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="artistID" value={{artist.0}} />
+                                <button type="submit" class="btn btn-warning btn-sm">Unfollow Profile</button>
+                            </form>
+                        {% else %}
+                            <form class="form-container" action="{% url 'follow_artist'%}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="artistID" value={{artist.0}} />
+                                <button type="submit" class="btn btn-primary btn-sm">Follow Profile</button>
+                            </form>
                         {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>            
+    </div>
+{% endfor %}
+<br></br>
+<h2>SONGS</h2>
+{% for track, liked, number_likes in track_with_likes %}
+    <div class="card">
+        <div class="row">
+            <div class="col col-md-6">
+                <img src="{{track.10}}" class="img-fluid track-image" alt="Responsive image">
+            </div>
+            <div class="col col-md-6">
+                <div class="card-body">
+                    <h5 class="my-4">{{track.1}}</h5>
+                    <p>
+                        By:
+                        {% for a in track.9 %}
+                            {{a}}
+                            {% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    </p>
+                    {% if track.5 %}
+                    <p style="color: red;">
+                        Explicit
+                    </p>
+                    {% endif %}
+                    <p>Spotify Social Likes: {{number_likes}}</p>
+                    <div id="song-interactions">
+                        {% if liked %}
+                            <form class="form-container" action="{%url 'unlike'%}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="trackID" value={{track.0}}/>
+                                <input type="hidden" name="type" value="track"/>
+                                <button type="submit" class="btn btn-warning btn-sm">Unlike</a>
+                            </form>
+                        {% else %}
+                            <form class="form-container" action="{%url 'like'%}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="trackID" value={{track.0}}/>
+                                <input type="hidden" name="type" value="track"/>
+                                <button type="submit" class="btn btn-primary btn-sm">Like</a>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+<br></br>
+<h2>ALBUMS</h2>
+{% for album, liked, number_likes in album_with_likes %}
+    <div class="card">
+        <div class="row">
+            <div class="col col-md-6">
+                <img src="{{album.4}}" class="img-fluid album-image" alt="Responsive image">
+            </div>
+            <div class="col col-md-6">
+                <input type="hidden" id="al{{album.0}}" name="albumID" value="{{album.0}}" />
+                <div class="card-body">
+                    <h5 class="my-4">{{album.1}}</h5>
+                    <p>
+                        By:
+                        {% for a in album.5 %}
+                            {{a}}
+                            {% if not forloop.last %},{% endif %}
+                        {% endfor %}
                         <p>Spotify Social Likes: {{number_likes}}</p>
-                        <div id="song-interactions">
-                            {% if liked %}
-                                <form class="form-container" action="{%url 'unlike'%}" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="trackID" value={{track.0}}/>
-                                    <input type="hidden" name="type" value="track"/>
-                                    <button type="submit" class="btn btn-warning btn-sm">Unlike</a>
-                                </form>
-                            {% else %}
-                                <form class="form-container" action="{%url 'like'%}" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="trackID" value={{track.0}}/>
-                                    <input type="hidden" name="type" value="track"/>
-                                    <button type="submit" class="btn btn-primary btn-sm">Like</a>
-                                </form>
-                            {% endif %}
-                        </div>
+                    </p>
+                    <div id="album-interactions">
+                        {% if liked %}
+                            <form class="form-container" action="{%url 'unlike'%}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="albumID" value={{album.0}}/>
+                                <input type="hidden" name="type" value="album"/>
+                                <button type="submit" class="btn btn-warning btn-sm">Unlike</a>
+                            </form>
+                        {% else %}
+                            <form class="form-container" action="{%url 'like'%}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="albumID" value={{album.0}}/>
+                                <input type="hidden" name="type" value="album"/>
+                                <button type="submit" class="btn btn-primary btn-sm">Like</a>
+                            </form>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
-    {% endfor %}
-    <br></br>
-    <h2>ALBUMS</h2>
-    {% for album, liked, number_likes in album_with_likes %}
-        <div class="card">
-            <div class="row">
-                <div class="col col-md-6">
-                    <img src="{{album.4}}" class="img-fluid album-image" alt="Responsive image">
-                </div>
+    </div>
+{% endfor %}
 
-                <div class="col col-md-6">
-                    <input type="hidden" id="al{{album.0}}" name="albumID" value="{{album.0}}" />
-                    <div class="card-body">
-                        <h7 class="my-4">{{album.1}}</h7> 
-                        <p>
-                            By:
-                            {% for a in album.5 %}
-                                {{a}}
-                                {% if not forloop.last %},{% endif %}
-                            {% endfor %}
-                            <p>Spotify Social Likes: {{number_likes}}</p>
-                        </p>
-                        <div id="album-interactions">
-                            {% if liked %}
-                                <form class="form-container" action="{%url 'unlike'%}" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="albumID" value={{album.0}}/>
-                                    <input type="hidden" name="type" value="album"/>
-                                    <button type="submit" class="btn btn-warning btn-sm">Unlike</a>
-                                </form>
-                            {% else %}
-                                <form class="form-container" action="{%url 'like'%}" method="POST">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="albumID" value={{album.0}}/>
-                                    <input type="hidden" name="type" value="album"/>
-                                    <button type="submit" class="btn btn-primary btn-sm">Like</a>
-                                </form>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endfor %}
-
-    <style>
-        .artist-image {
-            width: 25%; 
-            height: auto; 
-        }
-        .track-image {
-        width: 30%; 
+<style>
+    .artist-image {
+        width: 35%; 
         height: auto; 
-        }
-        .album-image {
-            width: 20%; 
-            height: auto; 
-        }
-    </style>
+    }
+    .track-image {
+        width: 35%; 
+        height: auto; 
+    }
+    .album-image {
+        width: 35%; 
+        height: auto; 
+    }
+</style>
+
 {% endblock %}

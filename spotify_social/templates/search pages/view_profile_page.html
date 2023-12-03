@@ -15,8 +15,20 @@
         border-radius: 5px;
     }
 </style>
+
 <a href="javascript:history.back()">Back</a>
 <br></br>
+
+<div id="user_info">
+    {% for row in results %}
+        <h2>{{row.0}}</h2>
+            <p><strong>Name:</strong> {{row.3}}</p>
+            <p><strong>School:</strong> {{row.5}}</p>
+            <p><strong>Area of Study:</strong> {{row.6}}</p>
+            <p><strong>Number of Posts:</strong> {{row.4}}</p>
+    {% endfor %}
+</div>
+
 <div id="interactions">
     {% if isFollowing %}
         <form class="form-container" action="{%url 'unfollow_profile'%}" method="POST">
@@ -31,16 +43,6 @@
             <button type="submit" class="btn btn-primary btn-sm">Follow Profile</a>
         </form>
     {% endif %}
-</div>
-<div id="user_info">
-    {% for row in results %}
-        <h2>{{row.0}}</h2>
-            <p><strong>First Name:</strong> {{row.1}}</p>
-            <p><strong>Last Name:</strong> {{row.2}}</p>
-            <p><strong>School:</strong> {{row.5}}</p>
-            <p><strong>Area of Study:</strong> {{row.6}}</p>
-            <p><strong>Number of Posts:</strong> {{row.4}}</p>
-    {% endfor %}
 </div>
 
 <br></br>
@@ -118,4 +120,5 @@
         height: auto; 
     }
 </style>
+
 {% endblock %}
