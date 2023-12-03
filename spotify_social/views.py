@@ -68,25 +68,27 @@ def user_home_page(request):
 
     # check if user is signed in before proceeding
     if "user_id" in request.session:
+        user_name = request.session["user_id"]
         # TODO: populate user home page by passing variables into HTML below
 
         get_callback(request)
+        load_user_profile(request)
 
         db = Database()
-        ## fix query to include only the users own posts and people they follow 
+        ## fix query to include only the users own posts and people they follow
         posts = db.execute(
             """
-            SELECT *
+            SELECT post.*
             FROM post
-            ORDER BY date_time DESC;
+            LEFT JOIN follows_profile ON post.user_name = follows_profile.user_name_following
+            WHERE post.user_name = %s OR follows_profile.user_name_follower = %s
+            ORDER BY post.date_time DESC;
             """,
-            (),
+            (user_name, user_name),
             True,
         )
 
-
         db.close()
-        #print(posts)
 
         return render(request, "signed-in/home_page.html", {"posts": posts[1]})
 
@@ -119,7 +121,7 @@ def user_profile_page(request):
     top_artists = []
     top_tracks = []
 
-    load_user_profile(request)
+    # load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_artists = request.session["top_items_user_profile"][0]
@@ -313,7 +315,7 @@ def view_profile_page(request):
 def songs_page(request):
     top_tracks = []
 
-    load_user_profile(request)
+    # load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_tracks = request.session["top_items_user_profile"][1]
@@ -335,7 +337,7 @@ def albums_page(request):
     unique_tracks = []
     seen_values = set()
 
-    load_user_profile(request)
+    # load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_tracks = request.session["top_items_user_profile"][1]
@@ -364,7 +366,7 @@ def artists_page(request):
 
     top_artists = []
 
-    load_user_profile(request)
+    # load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_artists = request.session["top_items_user_profile"][0]
