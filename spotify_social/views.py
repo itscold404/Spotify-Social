@@ -68,6 +68,7 @@ def user_home_page(request):
 
     # check if user is signed in before proceeding
     if "user_id" in request.session:
+        user_name = request.session['user_id']
         # TODO: populate user home page by passing variables into HTML below
 
         get_callback(request)
@@ -76,11 +77,13 @@ def user_home_page(request):
         ## fix query to include only the users own posts and people they follow 
         posts = db.execute(
             """
-            SELECT *
+            SELECT post.*
             FROM post
-            ORDER BY date_time DESC;
+            LEFT JOIN follows_profile ON post.user_name = follows_profile.user_name_following
+            WHERE post.user_name = %s OR follows_profile.user_name_follower = %s
+            ORDER BY post.date_time DESC;
             """,
-            (),
+            (user_name, user_name),
             True,
         )
 
