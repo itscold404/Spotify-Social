@@ -73,6 +73,7 @@ def user_home_page(request):
         get_callback(request)
 
         db = Database()
+        ## fix query to include only the users own posts and people they follow 
         posts = db.execute(
             """
             SELECT *
@@ -83,9 +84,9 @@ def user_home_page(request):
             True,
         )
         db.close()
-        # print(posts)
+        print(posts)
 
-        return render(request, "signed-in/home_page.html", {"posts": posts})
+        return render(request, "signed-in/home_page.html", {"posts": posts[1]})
 
     else:
         return redirect(reverse("login_page"))
