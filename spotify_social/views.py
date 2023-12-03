@@ -83,8 +83,10 @@ def user_home_page(request):
             (),
             True,
         )
+
+
         db.close()
-        print(posts)
+        #print(posts)
 
         return render(request, "signed-in/home_page.html", {"posts": posts[1]})
 
