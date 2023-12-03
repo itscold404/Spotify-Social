@@ -1,33 +1,31 @@
+{% extends "signed-in/base.html"%} {% block content %}
+
 <style>
     h1 {
         text-align: center;
     }
 </style>
 
-{% extends "signed-in/base.html"%} {% block content %}
-<h1>Welcome to Spotify Social</h1>
-
-<div id="posts_container">
-    <p>This is a test to check if the template is rendering.</p>
-    <table>
-        <thead>
-            <tr>
-                <th>user_name</th>
-                <th>date_time</th>
-                <th>content</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for post in posts %}
-            <tr>
-                <td>{{ post.0 }}</td>
-                <td>{{ post.1 }}</td>
-                <td>{{ post.2 }}</td>
-                {% endfor %}
-            </tr>
-        </tbody>
-    </table>
+<h1>Welcome to Spotify Social!</h1>
+<br></br>
+<h2 class="display-9">Most Recent Posts</h2>
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for post in posts %}
+        {% if forloop.counter <= 9 %}
+            <div class="col">
+                <div class="card text-center" style="border-color: #1db954;">
+                    <div class="card-body">
+                        <h2 class="card-title my-2 text-start" style="font-size: 16px;">{{post.0}}</h2>
+                        <hr class="my-2" style="border-color: #1db954; background-color: #1db954;">
+                        <p class="card-text">{{post.2}}</p>
+                        <p class="card-text text-start">Posted: {{post.1}}</p>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
 </div>
+
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/esm/popper"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

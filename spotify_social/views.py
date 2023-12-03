@@ -75,6 +75,7 @@ def user_home_page(request):
         load_user_profile(request)
 
         db = Database()
+        ## fix query to include only the users own posts and people they follow
         posts = db.execute(
             """
             SELECT post.*
@@ -88,7 +89,6 @@ def user_home_page(request):
         )
 
         db.close()
-        # print(posts)
 
         return render(request, "signed-in/home_page.html", {"posts": posts[1]})
 

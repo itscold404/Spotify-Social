@@ -1,15 +1,38 @@
-{% extends "signed-in/base.html"%} 
+{% extends "signed-in/base.html"%} {% block content %}
 
-{% block content %}
-<h1>What are you feeling today?</h1>
+<style>
+    h1 {text-align: center;}
+</style>
 
-<form method="post" action="{% url 'create_post' %}">
-    {% csrf_token %}
+<style>
+    /* Style for the back button */
+    #backButton {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        margin-right: 10px;  /* Add margin to the right */
+        margin-bottom: 10px; /* Add margin to the bottom */
+        background-color: #007BFF;
+        color: #fff;
+        padding: 10px;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+</style>
+<a href="javascript:history.back()">Back</a>
+<br></br>
 
-    <label for="content">Content:</label>
-    <textarea name="content" required></textarea><br>
+<h1>Create a Post</h1>
 
-    <button type="submit">Submit Post</button>
-</form>
-
+<div style="text-align: center; margin-top: 50px;">
+    <form method="post" action="{% url 'create_post' %}" style="display: inline-block;">
+        {% csrf_token %}
+        <textarea name="content" placeholder="Type here" rows="10" cols="50" required></textarea><br>
+        <br>
+        </br>
+        <button type="submit" class="btn btn-primary" style="background-color:#1db954; border:none">
+            Submit Post
+        </button>
+    </form>
+</div>
 {% endblock %}
