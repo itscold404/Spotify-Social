@@ -821,6 +821,16 @@ def create_post(request):
             False,
         )
 
+        db.execute(
+            """
+            UPDATE user_profile
+            SET number_of_posts = number_of_posts + 1
+            WHERE user_name = %s;
+            """,
+            (user_name,),
+            False,
+        )
+
         db.update_db_and_close()
         messages.success(request, "Posted!")
 
