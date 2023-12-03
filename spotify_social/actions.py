@@ -542,6 +542,7 @@ def load_user_profile(request):
             return authorize(request)
 
         display_info = get_display_info([artists, tracks])
+
         request.session["top_items_user_profile"] = display_info
         fill_top_items(display_info[0], request.session["user_id"], "artist")
         fill_top_items(display_info[1], request.session["user_id"], "track")
@@ -588,9 +589,9 @@ def fill_top_items(items: list, user_name, type):
                 """
                 SELECT *
                 FROM user_top_items
-                WHERE item_type=%s and item_ranking = %s;
+                WHERE user_name=%s and item_type=%s and item_ranking = %s;
                 """,
-                (type, i + 1),
+                (user_name, type, i + 1),
                 True,
             )
 
@@ -615,6 +616,7 @@ def fill_top_items(items: list, user_name, type):
                     (items[i][0], user_name, i + 1, type),
                     False,
                 )
+
         db.update_db_and_close()
 
 
@@ -960,7 +962,6 @@ def like_track_album(request):
             item_id = request.POST.get("albumID")
 
         item_id = item_id[:-1]
-        print("id is", item_id)
         db = Database()
         result = db.execute(
             confirmation_query,
@@ -1027,9 +1028,8 @@ def unlike_track_album(request):
 
             item_id = request.POST.get("albumID")
 
-        print("before change", item_id)
         item_id = item_id[:-1]
-        print("id is", item_id)
+
         db = Database()
         result = db.execute(
             confirmation_query,
