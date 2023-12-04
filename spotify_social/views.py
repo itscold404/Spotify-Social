@@ -78,11 +78,15 @@ def user_home_page(request):
         ## fix query to include only the users own posts and people they follow
         posts = db.execute(
             """
-            SELECT post.*
-            FROM post
-            LEFT JOIN follows_profile ON post.user_name = follows_profile.user_name_following
-            WHERE post.user_name = %s OR follows_profile.user_name_follower = %s
-            ORDER BY post.date_time DESC;
+            SELECT * 
+            FROM ((SELECT *
+                    FROM post 
+                    WHERE user_name=%s)
+                    UNION
+                    (SELECT post.*
+                    FROM post JOIN follows_profile ON post.user_name = follows_profile.user_name_following
+                    WHERE follows_profile.user_name_follower = %s)) AS posts
+            ORDER BY date_time DESC;
             """,
             (user_name, user_name),
             True,
