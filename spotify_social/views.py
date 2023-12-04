@@ -23,7 +23,8 @@ def login_page(request):
 # displays a page for the user to create an account
 # ----------------------------------------------------------------------------
 def signup_page(request):
-    # if username taken or password mismatch, user info stored in request.session["user_inputs"]
+    # if username taken or password mismatch, user info stored in
+    # request.session["user_inputs"]
     if "user_inputs" in request.session:
         user_data = request.session.pop("user_inputs", {})
         inputted_user_name = user_data[0]
@@ -60,22 +61,20 @@ def authorize_spotify(request):
 
 # ----------------------------------------------------------------------------
 # displays the home page of the user
-# TODO: could add posts here
 # ----------------------------------------------------------------------------
 def user_home_page(request):
-    # TODO: populate user home page by passing variables into HTML below
-    # same code as posts page function
-
     # check if user is signed in before proceeding
     if "user_id" in request.session:
         user_name = request.session["user_id"]
-        # TODO: populate user home page by passing variables into HTML below
 
         get_callback(request)
-        load_user_profile(request)
+
+        # update user profile information in database and store user
+        # information in session once per login
+        if "top_items_user_profile" not in request.session:
+            load_user_profile(request)
 
         db = Database()
-        ## fix query to include only the users own posts and people they follow
         posts = db.execute(
             """
             SELECT * 
@@ -125,8 +124,6 @@ def user_profile_page(request):
     top_artists = []
     top_tracks = []
 
-    # load_user_profile(request)
-
     if "top_items_user_profile" in request.session:
         top_artists = request.session["top_items_user_profile"][0]
         top_tracks = request.session["top_items_user_profile"][1]
@@ -159,8 +156,7 @@ def search_page(request):
 
     user_name = request.session["user_id"]
 
-    # list of boolean to represent if user is following each artist
-    isFollowing_artist = []
+    isFollowing_artist = []  # if user is following each artist
     likes_track = []  # if the user likes the track
     track_likes = []  # the number of likes of each track
     likes_album = []  # if the user likes the album
@@ -319,8 +315,6 @@ def view_profile_page(request):
 def songs_page(request):
     top_tracks = []
 
-    # load_user_profile(request)
-
     if "top_items_user_profile" in request.session:
         top_tracks = request.session["top_items_user_profile"][1]
 
@@ -340,8 +334,6 @@ def albums_page(request):
 
     unique_tracks = []
     seen_values = set()
-
-    # load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_tracks = request.session["top_items_user_profile"][1]
@@ -369,8 +361,6 @@ def artists_page(request):
         return redirect(reverse("login_page"))
 
     top_artists = []
-
-    # load_user_profile(request)
 
     if "top_items_user_profile" in request.session:
         top_artists = request.session["top_items_user_profile"][0]

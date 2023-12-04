@@ -16,8 +16,6 @@
 }
 </style>
 
-<a href="javascript:history.back()">Back</a>
-
 <h2>ARTISTS</h2>
 {% for artist, isFollowing in artist_follow_status %}
     <div class="card">
@@ -37,13 +35,13 @@
                             <form class="form-container" action="{% url 'unfollow_artist'%}" method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" name="artistID" value={{artist.0}} />
-                                <button type="submit" class="btn btn-warning btn-sm">Unfollow Profile</button>
+                                <button type="submit" class="btn btn-warning btn-sm">Unfollow Artist</button>
                             </form>
                         {% else %}
                             <form class="form-container" action="{% url 'follow_artist'%}" method="POST">
                                 {% csrf_token %}
                                 <input type="hidden" name="artistID" value={{artist.0}} />
-                                <button type="submit" class="btn btn-primary btn-sm">Follow Profile</button>
+                                <button type="submit" class="btn btn-primary btn-sm">Follow Artist</button>
                             </form>
                         {% endif %}
                     </div>

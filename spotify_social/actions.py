@@ -36,6 +36,10 @@ REDIRECT_URI = "http://127.0.0.1:8000/home"
 # ----------------------------------------------------------------------------
 def check_credentials(request):
     if request.method == "POST":
+        # ensure the session data from the previous session is cleared
+        # before proceeding
+        request.session.flush()
+
         inputted_user_name = request.POST.get("user_name")
         inputted_password = request.POST.get("password")
 
@@ -63,14 +67,11 @@ def check_credentials(request):
         db.close()
 
         # A matching username found, now check if password matches
-        # TODO: delete except section after database wipe with real data
-        # try:
         if (num_matches == 1) and bcrypt.checkpw(
             inputted_password.encode("utf-8"), hashed_password.encode("utf-8")
         ):
             request.session["user_id"] = inputted_user_name
 
-            # TODO: create/populate user home page
             # redirect used to ensure user is using a proper url to avoid errors
             request.session["user_id"] = inputted_user_name
             return redirect(reverse("authorize_page"))
@@ -138,6 +139,10 @@ def create_account(request):
                 )
 
                 db.update_db_and_close()
+
+                # ensure the session data from the previous session is cleared
+                # before proceeding
+                request.session.flush()
 
                 # user_id will be our main way to tell which user is logged in so what data
                 # he/she will have access to
@@ -303,7 +308,8 @@ def get_token(auth_code):
 
 
 # ----------------------------------------------------------------------------
-# store spotify callback code and state
+# store spotify callback code and state. store auth_header needed for
+# API calls
 # ----------------------------------------------------------------------------
 def get_callback(request):
     # check if user is signed in before proceeding
@@ -492,6 +498,8 @@ def search_items(request):
 
         if "code" in request.session and "auth_header" in request.session:
             token = request.session["auth_header"]
+
+            # search only non-empty strings
             if searched_phrase != "":
                 artist_matches = search_for(
                     token, "artist", searched_phrase, SEARCH_LIMIT_ARTIST
@@ -519,7 +527,6 @@ def search_items(request):
 
                 return redirect(reverse("search_page"))
 
-            # TODO: search on other pages will also redirect to user home page
         return redirect(reverse("user_home_page"))
 
 

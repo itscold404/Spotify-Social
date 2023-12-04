@@ -12,12 +12,14 @@
 <div class="row row-cols-1 row-cols-md-3 g-4">
     {% for post in posts %}
             <div class="col">
-                <div class="card text-center" style="border-color: #1db954;">
-                    <div class="card-body">
-                        <h2 class="card-title my-2 text-start" style="font-size: 16px;">{{post.0}}</h2>
+                <div class="card text-center" style="border-color: #1db954;  display: flex; flex-direction: column; height: 100%;">
+                    <div class="card-body" style="display: flex; flex-direction: column;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <h2 class="card-title my-2 text-start" style="font-size: 15px;">{{post.0}}</h2>
+                            <h2 class="card-title my-2 text-start" style="font-size: 15px;">Posted: {{post.1}}</h2>
+                        </div>
                         <hr class="my-2" style="border-color: #1db954; background-color: #1db954;">
-                        <p class="card-text">{{post.2}}</p>
-                        <p class="card-text text-start">Posted: {{post.1}}</p>
+                        <p class="card-text" style="font-size: 24px;">{{post.2}}</p>
                     </div>
                 </div>
             </div>
